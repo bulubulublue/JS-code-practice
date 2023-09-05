@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      对于以下代码，会创建一个全局上下文
+      全局上下文有个特殊的地方，在于有全局对象(即window对象)和全局变量
+      1. var和function声明会创建在全局对象中，let const class声明的变量创建在全局scope中
+      2. 在加载时会先在scope中找变量，找不到再到全局对象中找
+    */
+
+      let test = 'test'
+      console.log(test) //test
+      console.log(window.test) // undefined 因为let声明的变量在全局scope中，而不是全局对象中
+
+      var testTwo = 'testTwo'
+      console.log(testTwo) //testTwo
+      console.log(window.testTwo) //testTwo var声明的变量就能在window中找到
+
+      // console.log(Function) // 这里会报错，因为在全局scope中没有Function
+      console.log(window.Function) // ƒ Function() { [native code] }
+
+      let Function = 'let 定义覆盖Function'
+      console.log(Function) // let 定义覆盖Function
+      console.log(window.Function) //ƒ Function() { [native code] }
+    </script>
+  </body>
+</html>

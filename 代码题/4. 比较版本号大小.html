@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const arr = [
+        '1.1',
+        '2.3.3',
+        '4.3.5',
+        '0.3.1',
+        '0.302.1',
+        '4.20.0',
+        '4.3.5.1',
+        '1.2.3.4.5',
+      ]
+
+      arr.sort((a, b) => {
+        let i = 0
+        const aArr = a.split('.')
+        const bArr = b.split('.')
+        while (true) {
+          const s1 = aArr[i]
+          const s2 = bArr[i++]
+
+          if (s1 === undefined || s2 === undefined) {
+            return bArr.length - aArr.length
+          }
+
+          if (s1 === s2) continue
+
+          return s2 - s1
+        }
+      })
+
+      console.log(arr)
+    </script>
+  </body>
+</html>

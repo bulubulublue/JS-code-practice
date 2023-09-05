@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        方法一：事件会在n秒后执行一次
+        事件停止触发后依然会再执行一次事件（倒计时结束时）
+      */
+      function throttle(fn, delay) {
+        let timer;
+
+        return function (...args) {
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = null;
+            }, delay);
+          }
+        };
+      }
+
+      /*
+        方法二：事件会在一开始立即执行一次
+        事件停止触发后没有办法再执行事件
+      */
+       function throttle2(fn,delay){
+        let prev = 0
+
+        return function(...args){
+            let now = +new Date()
+
+            // 如果当前时间-上一次执行的时间 > 间隔，则执行
+            if(now - prev > wait){
+                prev = now
+                fn.apply(this,args)
+            }
+        }
+       }
+    </script>
+  </body>
+</html>

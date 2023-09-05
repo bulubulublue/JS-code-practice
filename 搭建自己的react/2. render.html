@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      import { myCreateElement, TEXT_ELEMENT } from "./js/createElement.js";
+
+      // render 方法
+      function myRender(element, container) {
+        // 如果是text节点，则创建text
+        const node =
+          element.type === TEXT_ELEMENT
+            ? document.createTextNode("")
+            : document.createElement(element.type);
+
+        // 添加props属性
+        const isProperty = (key) => key !== "children";
+
+        Object.keys(element.props)
+          .filter(isProperty)
+          .forEach((key) => {
+            node[key] = element.props[key];
+          });
+
+        // 创建children节点
+        element.props.children.forEach((child) => {
+          myRender(child, node);
+        });
+
+        container.appendChild(node);
+      }
+
+      // 添加到对象中
+      const MyReact = {
+        myRender,
+        myCreateElement,
+      };
+      // 调用
+      const elementOutput = MyReact.myCreateElement(
+        "div",
+        { id: "foo" },
+        MyReact.myCreateElement("a", null, "bar"),
+        MyReact.myCreateElement("span", null)
+      );
+
+      /*
+        {
+            "type": "div",
+            "props": {
+                "id": "foo",
+                "children": [
+                {
+                    "type": "a",
+                    "props": {
+                    "children": [
+                        { "type": "text", "props": { "nodeValue": "bar", "children": [] } }
+                    ]
+                    }
+                },
+                { "type": "span", "props": { "children": [] } }
+                ]
+            }
+        }
+      */
+      console.log(JSON.stringify(elementOutput));
+
+      const root = document.getElementById("root");
+      MyReact.myRender(elementOutput, root);
+    </script>
+  </body>
+</html>

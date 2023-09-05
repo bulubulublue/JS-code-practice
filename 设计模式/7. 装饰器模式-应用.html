@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">电影A</button>
+    <script>
+      /*
+        应用1：上报用户点击行为
+        应用2：自定义ajax，部分传递token，部分请求不传递
+      */
+
+      Function.prototype.before = function (beforeFn) {
+        let _this = this // this: 原来的函数
+        return function () {
+          //先进性前置函数调用
+          beforeFn.apply(this, arguments)
+
+          // 执行原来的函数, 并返回值
+          return _this.apply(this, arguments)
+        }
+      }
+
+      const btn = document.querySelector('#btn')
+
+      function log() {
+        console.log('数据上报')
+      }
+
+      function render() {
+        console.log('页面处理')
+      }
+
+      render = render.before(log)
+
+      btn.addEventListener('click', () => {
+        render()
+      })
+    </script>
+  </body>
+</html>

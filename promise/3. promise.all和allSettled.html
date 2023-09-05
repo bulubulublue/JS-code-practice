@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const hdcms = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('第一个Promise')
+        }, 1000)
+      })
+      const houdunren = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('第二个异步')
+        }, 1000)
+      })
+      const hd = Promise.all([hdcms, houdunren])
+        .then((results) => {
+          console.log(results) //["第一个Promise","第二个异步"]
+        })
+        .catch((msg) => {
+          console.log(msg)
+        })
+
+      //两个 Promise 状态都为 `fulfilled` 时，hd状态才为`fulfilled`
+      setTimeout(() => {
+        console.log(hd) //Promise {<fulfilled>: undefined}
+      }, 1000)
+
+      // 示例2：
+      //有一个为reject，返回结果为reject，且失败时只能获得第一个失败 Promise 的数据。
+      //其中有一个promise进行处理，then或者catch返回的是resolved的promise，all会视为成功
+      const p1 = new Promise((resolve, reject) => {
+        resolve('成功了')
+      })
+      const p2 = Promise.reject('fail')
+      const p3 = new Promise((resolve, reject) => {
+        reject('成功了')
+      })
+
+      const p = Promise.all([p1, p2, p3])
+        .then((result) => {
+          //未被调用
+        })
+        .catch((error) => {
+          console.log(error) //fail
+        })
+
+      setTimeout(() => {
+        console.log(p) //Promise {<fulfilled>: undefined}
+      }, 1000)
+
+      //示例3：如果promise fail，使用catch处理，则promise.all仍可以正常处理
+      var pp1 = new Promise((resolve, reject) => {
+        resolve('p1')
+      })
+      var pp2 = new Promise((resolve, reject) => {
+        resolve('p2')
+      })
+      var pp3 = new Promise((resolve, reject) => {
+        reject('p3')
+      })
+      Promise.all([pp1, pp2, pp3].map((p) => p.catch((e) => '出错后返回的值')))
+        .then((values) => {
+          console.log(values) //['p1', 'p2', '出错后返回的值']
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      // allSettled
+      // 下面的p2 返回状态为 `rejected` ，但`promise.allSettled` 不关心，它始终将状态设置为 `fulfilled`
+      const pro1 = new Promise((resolve, reject) => {
+        resolve('resolved')
+      })
+      const pro2 = new Promise((resolve, reject) => {
+        reject('rejected')
+      })
+      Promise.allSettled([pro1, pro2]).then((msg) => {
+        console.log(msg) //[{status: 'fulfilled', value: 'resolved'},{status: 'rejected', reason: 'rejected'}]
+      })
+    </script>
+  </body>
+</html>

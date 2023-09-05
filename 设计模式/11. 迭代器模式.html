@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        指提供一种方法顺序访问一个聚合对象中的各个元素，又不需要暴露该对象的内部表示
+        可以把迭代的过程从业务逻辑中分离出来
+      */
+      var myEach = function (arr, cb) {
+        for (let i = 0; i < arr.length; i++) {
+          cb(i, arr[i])
+        }
+      }
+
+      myEach([11, 22, 33], function (index, value) {
+        console.log(index, value)
+      })
+
+      //es6 Iterator
+    </script>
+  </body>
+</html>

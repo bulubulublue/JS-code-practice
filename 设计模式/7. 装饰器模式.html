@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 装饰器模式可以在不更改原有代码的基础上，对已有功能进行拓展
+      Function.prototype.before = function (beforeFn) {
+        let _this = this // this: 原来的函数
+        return function () {
+          //先进性前置函数调用
+          beforeFn.apply(this, arguments)
+
+          // 执行原来的函数, 并返回值
+          return _this.apply(this, arguments)
+        }
+      }
+
+      Function.prototype.after = function (afterFn) {
+        let _this = this // this: 原来的函数
+        return function () {
+          // 执行原来的函数, 并返回值
+          const res = _this.apply(this, arguments)
+
+          //后置函数调用
+          afterFn.apply(this, arguments)
+
+          return res
+        }
+      }
+
+      // 等同于test = new Function()
+      function test() {
+        console.log('111')
+      }
+
+      // 即调用Function.prototype.before函数，参数对应beforeFn
+      // test1: 对应的是before函数返回的函数
+      let test1 = test
+        .before(function () {
+          console.log('before')
+        })
+        .after(function () {
+          console.log('after')
+        })
+
+      //即调用前置函数，和原函数(test)
+      test1()
+    </script>
+  </body>
+</html>

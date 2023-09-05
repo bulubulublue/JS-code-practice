@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        如果需要从对象中获取某个属性的值，可以使用柯里化更灵活
+      */
+      const nameList1 = [
+        { mid: 'name1', profession: 'mid' },
+        { mid: 'name2', profession: 'mid' },
+        { mid: 'name3', profession: 'mid' },
+      ]
+
+      const nameList2 = [
+        { adc: 'name1', profession: 'ADC' },
+        { adc: 'name2', profession: 'ADC' },
+        { adc: 'name3', profession: 'ADC' },
+      ]
+
+      // 此时如果需要获取namelist1中的mid值，和namelist2中的adc的值
+      nameList1.map((item) => item.mid)
+      nameList2.map((item) => item.adc)
+
+      // 如果使用柯里化抽象出属性
+      // const curryFn = function (propertyName) {
+      //   return function (element) {
+      //     return element[propertyName]
+      //   }
+      // }
+      //用箭头函数写就是
+      const curryFn = (propertyName) => (element) => element[propertyName]
+
+      // 调用
+      const name_mid = curryFn('mid')
+      const name_adc = curryFn('adc')
+
+      nameList1.map(name_mid)
+      nameList1.map(name_adc)
+    </script>
+  </body>
+</html>

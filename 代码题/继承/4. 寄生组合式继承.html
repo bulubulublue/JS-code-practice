@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+     function Animal(colors){
+      this.colors = colors
+     }
+
+     Animal.prototype.bark = function(){
+      console.log('bark')
+     }
+
+     function Dog(name,colors){
+      Animal.call(this,colors)
+      this.name = name
+     }
+
+
+
+     function extend(parent,child){
+      const dummyFn = function(){}
+      dummyFn.prototype = parent.prototype
+      child.prototype = new dummyFn()
+      child.prototype.constructor = child
+      return child
+      
+     }
+
+     extend(Animal,Dog)
+
+
+    // 或者
+    Dog.prototype = Object.create(Animal.prototype)
+    Dog.prototype.construtor = Dog
+
+
+    
+    </script>
+  </body>
+</html>

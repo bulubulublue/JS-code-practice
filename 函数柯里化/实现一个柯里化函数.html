@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      要求：实现函数的自动柯里化
+      原函数：sum(1,2,3,4)
+      已知定义的一个函数：
+      function sum(...args){
+        return args.reduce(sum,i)=>sum+i)
+      }  
+
+      需要实现一个柯里化函数currying
+      最后调用sum函数方法为：
+      var sumCurry = currying(sum)
+      sum(1)(2)
+      sum(1,2)(3)
+      sum(1)(2)(3)(4)(5)
+    */
+
+      function add(a, b, c) {
+        console.log(a + b + c)
+      }
+
+      function curry(fn, ...args) {
+        // fn.length: 获取fn函数参数的长度
+        let len = fn.length
+        return function () {
+          // args: curry函数接收的参数
+          // arguments: return的函数接收的参数
+          let _args = [...args, ...arguments]
+          if (_args.length < len) {
+            return curry.call(this, fn, ..._args)
+          }
+          return fn.apply(this, _args)
+        }
+      }
+
+
+      let tmp = curry(add)
+      // 执行tmp(3): args:[], arguments[3]
+      // 执行tmp(3)(1) args:[3],arguments:[1]
+      // 执行tmp(3)(1)(4) args:[3,1] arguments:[4]
+      tmp(3)(1)(4)
+
+
+      // //       function sum(...args) {
+      // //     //对第一层参数求和
+      // //     let x = args.reduce((acc, next) => {
+      // //         return acc + next;
+      // //     })
+      // //     //返回一个新的函数
+      // //     return function (...args2) { //第二层的参数
+      // //         //当没有第二层参数时，返回x即可
+      // //         if (args2.length == 0) return x;
+      // //         let y = args2.reduce((acc, next) => {
+      // //             return acc + next;
+      // //         })
+      // //         return sum(x + y); //返回x+y作为新的第一层
+      // //     }
+      // // }
+
+      // // console.log(sum(1, 2)(3)(4)()); // 10
+      // // console.log(sum(1)(2, 3, 4, 5)(10)()); // 25
+
+      // // //自己写一个减法的 天才！
+      // // function decrease(...args) {
+      // //     let x = args.reduce((acc, next) => {
+      // //         return acc - next;
+      // //     })
+      // //     console.log(x);
+      // //     return function (...args2) {
+      // //         if (args2.length == 0) return x;
+      // //         let y = args2.reduce((acc, next) => {
+      // //             return acc - next;
+      // //         }, 0)
+      // //         console.log(y);
+      // //         return decrease(x + y);
+      // //     }
+      // // }
+      // // console.log(decrease(1, 2)(3)(4, 5)()); // -13
+      // // console.log(decrease(1)(2, 3, 4, 5)(10)()); // -23
+    </script>
+  </body>
+</html>

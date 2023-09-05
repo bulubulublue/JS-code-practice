@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 将所有工作分为每个小的unit，从而在每个unit完成后，可以暂停工作
+      // 在这里使用requestIdleCallback进行模拟，在react中，现在会使用schedular package实现
+      // requestIdleCallback(callback, options)：
+      // 参数1的callback会接收一个idleDeadline参数，可以获取当前还空闲的时间
+      let nextUnitOfWork = null;
+
+      function workLoop(deadline) {
+        let shouldYield = false;
+        while (nextUnitOfWork && !shouldYield) {
+          // 执行操作
+          nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+          shouldYield = deadline.timeRemaining() < 1;
+        }
+
+        // 当没有空闲进行操作时，使用requestIdleCallback等待进行下一次操作
+        requestIdleCallback(workLoop);
+      }
+
+      //先操作一次
+      requestIdleCallback(workLoop);
+
+      // 实际操作的函数，如进行渲染等
+      function performUnitOfWork(nextUnitOfWork) {}
+    </script>
+  </body>
+</html>

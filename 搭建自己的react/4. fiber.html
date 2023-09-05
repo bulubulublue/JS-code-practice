@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      /*  
+            fiber: 可以用于将react的渲染工作分割为一个个更小的unit
+            每个fiber代表一个node元素
+            每个fiber有三个属性：child, parent, sibling（代表最近的一个sibling)，这个就可以通过一个fiber找到下一个节点
+            遍历顺序：
+            1. 完成当前fiber的工作，判断当前fiber是否有child
+            2. 如果有child，则将child当作下一个工作unit
+               如果没有child，则sibling作为下一个工作unit
+            3. 当遍历至一个fiber节点，即没有child，也没有sibling时，则返回到父节点的sibling，作为下一个工作unit
+            4. 按照这个顺序一直遍历到root节点，即没有sibling，也没有父节点，则表示遍历结束
+        */
+
+      /*
+            children的数据类型：
+            INode {
+              type: string;
+              props: {
+                [key]?:value;
+                children?: INode[]
+              }
+            }
+        */
+
+      // ====================创建dom节点开始======================================
+      // 参数：{type: string, props:{children?:[],[key]:value}}
+      function createDom(element) {
+        // 如果是text节点，则创建text
+        const node =
+          element.type === "text"
+            ? document.createTextNode("")
+            : document.createElement(element.type);
+
+        // 添加props属性
+        const isProperty = (key) => key !== "children";
+
+        Object.keys(element.props)
+          .filter(isProperty)
+          .forEach((key) => {
+            node[key] = element.props[key];
+          });
+
+        return node;
+      }
+      // ====================创建dom节点结束======================================
+
+      // ==========用于处理concurrent模式的事件循环机制-开始=========
+      function workLoop(deadline) {
+        let shouldYield = false;
+        while (nextUnitOfWork && !shouldYield) {
+          // 执行操作
+          nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+          shouldYield = deadline.timeRemaining() < 1;
+        }
+
+        // 当没有空闲进行操作时，使用requestIdleCallback等待进行下一次操作
+        requestIdleCallback(workLoop);
+      }
+
+      //先操作一次
+      requestIdleCallback(workLoop);
+
+      // ==========用于处理concurrent模式的事件循环机制-结束====================
+
+      let nextUnitOfWork = null;
+
+      // =============实际操作函数开始==========================================
+
+      // 实际操作的函数，如进行渲染等
+      // fiber: 表示当前需要操作的节点
+      // fiber的初始值见render函数(即nextUnitOfWork)
+      function performUnitOfWork(fiber) {
+        // step1: 处理当前fiber
+        if (!fiber.dom) {
+          fiber.dom = createDom(fiber);
+        }
+
+        // 将fiber生成的dom元素添加到parent的dom元素上
+        if (fiber.parent) {
+          fiber.parent.dom.appendChild(fiber.dom);
+        }
+
+        // step2: 根据children生成新的fiber对象
+        const elements = fiber.props.children;
+        let index = 0;
+        let prevSibling = null;
+
+        while (index < elements.length) {
+          const element = elements[index];
+
+          const newFiber = {
+            type: element.type,
+            props: element.props,
+            parent: fiber,
+            dom: null,
+          };
+
+          // 添加到fiber树上，如果是第一个则是child，否则是sibling
+          if (index === 0) {
+            fiber.child = newFiber;
+          } else {
+            prevSibling.sibling = newFiber;
+          }
+
+          prevSibling = newFiber;
+          index++;
+        }
+
+        //step3: 返回下一个需要处理的fiber
+        // child->sibling->uncle(parent's sibling)
+        if (fiber.child) {
+          return fiber.child;
+        }
+        let nextFiber = fiber;
+        while (nextFiber) {
+          if (nextFiber.sibling) {
+            return nextFiber.sibling;
+          }
+          nextFiber = nextFiber.parent;
+        }
+      }
+
+      // =============实际操作函数结束=========================================
+
+      //====================初始化root数据开始==================================
+      // 将root节点创建为fiber
+      /*
+        react中如何调用render函数：
+        const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+        root.render(
+            <Provider store={store}>
+                <App />
+            </Provider>,
+        );
+      */
+      // 通过调用render方法来触发渲染
+      const root = document.querySelector("#root");
+      const children = {
+        type: "div",
+        props: {
+          children: [
+            {
+              type: "text",
+              props: {
+                nodeValue: "hello",
+                children: [],
+              },
+            },
+            {
+              type: "text",
+              props: {
+                nodeValue: "somebody",
+                children: [],
+              },
+            },
+          ],
+        },
+      };
+
+      function render(element, root) {
+        nextUnitOfWork = {
+          dom: root,
+          props: {
+            children: [element],
+          },
+        };
+      }
+
+      render(children, root);
+
+      //===================初始化数据结束==================================
+    </script>
+  </body>
+</html>

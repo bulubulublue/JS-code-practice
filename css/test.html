@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        display: flex;
+      }
+      .container > div {
+        width: 100px;
+      }
+
+      .container div:nth-child(1) {
+        background-color: antiquewhite;
+      }
+
+      .container div:nth-child(2) {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <form enctype="">
+      <script>
+        // async function async1() {
+        //   console.log('async1')
+        //   await async2()
+        //   console.log('async1 end')
+        // }
+
+        // async1()
+
+        // async function async2() {
+        //   console.log('async2')
+        // }
+
+        // new Promise((res) => {
+        //   console.log('promise1')
+        // }).then((res) => {
+        //   console.log('promise then')
+        // })
+
+        // console.log('script end')
+
+        const myNumbers = [1, 2, 3, 4, 5, 6, 7]
+        const myFunction = (arr) => {
+          return arr.map((x) => x + 3).filter((x) => x < 7)
+        }
+
+        console.log(myFunction(myNumbers))
+      </script>
+    </p>
+  </body>
+</html>

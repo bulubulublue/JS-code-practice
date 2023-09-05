@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      构造函数继承
+      优点：父类所有的引用类型数据，不会被子类共享
+            同时在调用父构造函数时，可以传参
+      缺点：子类不能访问父类原型属性上的方法和参数
+      */
+      function User(name) {
+        this.name = name
+        this.foods = ['banana', 'apple']
+        this.getName = function () {
+          return this.name
+        }
+      }
+
+      // 给User的原型添加属性
+      User.prototype.getAge = () => {
+        console.log('User的prototype方法')
+        return 20
+      }
+
+      function Student(name) {
+        /*
+          实际是调用了User方法，然后改变了this为当前对象
+          同时在调用父构造函数时，可以传参
+        */
+        User.call(this, name)
+      }
+
+      const stuA = new Student()
+      // 这里会报错，因为不能调用父类（User）prototype上的方法
+      // stuA.getAge()
+
+      // stuA修改User中的name和foods
+      stuA.name = 'xiao hong'
+      stuA.foods.push('grape')
+      console.log(stuA.name) //xiao hong
+      console.log(stuA.foods) // ['banana', 'apple', 'grape']
+
+      console.log('-------------------')
+
+      //此时再新建一个Student的实例stuB
+      const stuB = new Student()
+      console.log(stuB.name) //xiao ming 对于值对象，没有随stuA的改变而改变
+      console.log(stuB.foods) // ['banana', 'apple'] 不受sutA的更改而影响
+    </script>
+  </body>
+</html>

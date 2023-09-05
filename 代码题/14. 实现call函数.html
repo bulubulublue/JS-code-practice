@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // context: call函数传入的第一个参数，需要绑定的对象
+      Function.prototype.myCall = function (context,...args) {
+        //this: 即调用call的函数
+        if (typeof this !== 'function') {
+          throw new TypeError('Error')
+        }
+
+        result = null
+
+        //当使用...args时，如果没有传入参数，则args将是[]
+
+        // 判定context是否传入，如果未传入，则默认为window
+        context = context || window
+        context.fn = this
+        result = context.fn(...args)
+
+        // 删除fn属性
+        delete context.fn
+
+        return result
+      }
+
+      function showName(age){
+        console.log(this.name,age)
+      }
+
+      const obj = {name:'aaa'}
+
+      showName.myCall(obj)
+    </script>
+  </body>
+</html>

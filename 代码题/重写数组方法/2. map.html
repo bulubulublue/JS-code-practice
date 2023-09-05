@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      Array.prototype.myMap =  function(callbackFn,thisArg) {
+        if (this == null) {
+          throw new TypeError("this is null or not defined");
+        }
+        if (typeof callbackFn !== "function") {
+          throw new TypeError(callbackFn + " is not a function");
+        }
+
+        const arr = this;
+        const newArr = [];
+        for (let index = 0; index < arr.length; index++) {
+          const newRes = callbackFn.call(thisArg, arr[index], index, arr);
+          newArr.push(newRes);
+        }
+
+        return newArr;
+      };
+
+      const arr = [1,2,4]
+      const res = arr.myMap((item,index,arr)=>{
+        console.log(item,index,arr)
+        return {age:item}
+      })
+
+      console.log(res)
+    </script>
+  </body>
+</html>

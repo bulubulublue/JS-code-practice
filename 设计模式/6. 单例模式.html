@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 单例模式：保证一个类仅有一个实例，并提供一个访问它的全局访问点
+      // 主要解决一个全局使用的类频繁地创建和销毁，占用内存
+
+      // es5中，用闭包和IIFE实现
+      const Single = (function () {
+        let instance
+
+        function User(name, age) {
+          this.name = name
+          this.age = age
+        }
+        return function (name, age) {
+          // 如果instance还未创建，则创建一个
+          if (!instance) {
+            instance = new User(name, age)
+          }
+
+          return instance
+        }
+      })()
+
+      // 即使重复调用多次，也只会有一个实例
+      // console.log(Single('name1', 20) === Single()) // true
+
+      // 应用：创建一个对话框
+      const Modal = (function () {
+        let instance
+
+        return function () {
+          if (!instance) {
+            instance = document.createElement('div')
+            instance.innerHTML = 'Login'
+            instance.className = 'login-modal'
+            instance.style.display = 'none'
+            document.body.appendChild(instance)
+          }
+
+          return instance
+        }
+      })()
+
+      const modal = Modal()
+      modal.style.display = 'block'
+    </script>
+  </body>
+</html>

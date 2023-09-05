@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const testArr = [1, ,,[3, [4]], [2, [3, 4, [25, 36]]]];
+
+      function flattenArr2(arr) {
+        let res = [];
+
+        arr.forEach((item) => {
+            res = res.concat(Array.isArray(item) ? flattenArr2(item) : item);
+        });
+
+        return res;
+      }
+
+      console.log(flattenArr2(testArr))
+
+      //es6写法
+      //[].concat(...[1,[2]]) -> [1,2]
+      function flatten(arr) {
+        while (arr.some((item) => Array.isArray(item))) {
+          arr = [].concat(...arr);
+        }
+        return arr;
+      }
+
+      flatten(testArr);
+
+      console.log("=================solution3=================")
+
+      // 方法三，使用reduce实现
+      function flatten3(arr) {
+        return arr.reduce((prev,item)=>
+            prev.concat(Array.isArray(item) ? flatten3(item) : item)
+        ,[])
+      }
+
+      console.log(flatten3(testArr))
+
+
+      console.log("=================solution4=================")
+      // 传入参数，来定义flat的层数
+      function flatten4(arr,num) {
+        if(num > 0){
+            return arr.reduce((prev,item)=>
+            prev.concat(Array.isArray(item) ? flatten4(item,num-1) : item)
+        ,[])
+        }
+
+        return arr
+      }
+
+      console.log(flatten4(testArr,1))
+
+      // 注意：如果数组中有空位，使用forEach(), filter(), reduce(), every() 和 some() 会自动跳过空位
+      // 如：[1,2,3,,,] -> [1,2,3]
+
+      const arr = [1,2,3,,,]
+      console.log(Array.from(arr)) // [1, 2, 3, undefined, undefined]
+    </script>
+  </body>
+</html>

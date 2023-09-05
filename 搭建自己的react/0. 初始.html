@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+            需求：将以下react代码转化为JS代码
+            const element = <h1 title="foo">Hello</h1>
+            const container = document.getElementById("root")
+            ReactDOM.render(element, container)
+        */
+
+      // 对于jsx语法，在react中会使用Babel进行编译，编译后的结果如下
+      // const element = React.createElement("h1", { title: "foo" }, "Hello");
+
+      //转化为JS代码
+      const element = {
+        type: "h1",
+        props: {
+          title: "foo",
+          children: "Hello",
+        },
+      };
+
+      // 转化render方法: render方法就是创建DOM节点并渲染
+      // ReactDOM.render(element, container)
+
+      // 1. 根据element对象创建node节点, 并添加属性
+      const node = document.createElement(element.type);
+      node["title"] = element.props.title;
+
+      //2. 创建children节点，如果是text，就创建textNode
+      const text = document.createTextNode("");
+      text.nodeValue = element.props.children;
+
+      // 3. 将节点添加到root上
+      node.appendChild(text);
+      const root = document.getElementById("root");
+      root.appendChid(node);
+    </script>
+  </body>
+</html>

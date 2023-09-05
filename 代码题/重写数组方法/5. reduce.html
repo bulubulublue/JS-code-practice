@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+            reduce(callbackFn, initialValue?)
+            initialValue :
+            - 如果指定了 initialValue，则 callbackFn 从数组中的第一个值作为 currentValue 开始执行。
+            - 如果没有指定 initialValue，则 accumulator 初始化为数组中的第一个值，并且 callbackFn 从数组中的第二个值作为 currentValue 开始执行。
+              在这种情况下，如果数组为空（没有第一个值可以作为 accumulator 返回），则会抛出错误
+        */
+      Array.prototype.myReduce = function (callbackFn, initialValue) {
+        if (this == null) {
+          throw new TypeError("this is null or not defined");
+        }
+        if (typeof callbackFn !== "function") {
+          throw new TypeError(callbackFn + " is not a function");
+        }
+
+        if(!initialValue && !this.length){
+            throw new TypeError("no value for accumulator");
+        }
+
+        const arr = this
+
+        let res = initialValue || arr[0]
+        let startIndex = initialValue ? 0 : 1
+
+        for(let i = startIndex ; i < arr.length ; i++){
+            // 这里不需要用call来改变this
+            res = callbackFn(res,arr[i],i,arr)
+        }
+
+        return res
+
+      };
+
+      const arr = [1, 2, 4];
+      const res = arr.myReduce((prev, item, index, arr) => {
+        return prev + item;
+      }, 0);
+
+      console.log(res)
+    </script>
+  </body>
+</html>

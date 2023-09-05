@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 第一步：改变this指向
+      // 第二步：将新函数返回出来
+      // 注意：函数可能有返回值，所以需要return apply的结果
+      const obj = { name: "hello" };
+      const fn = function () {
+        console.log(this.name);
+      };
+
+      // Function.prototype.bind = function (newObj) {
+      //   let that = this // 这里的this就是指fn函数，因为是由fn调用的
+      //   return function () {
+      //     return that.apply(newObj)
+      //   }
+      // }
+
+      let bindFn = fn.bind(obj);
+      bindFn();
+
+      // 第二版：bind调用的时候可能会传递参数,而且可能分为bind和调用的时候传递
+      // const obj2 = { name: 'hello' }
+      // const fn2 = function (petName, petAge) {
+      //   console.log(this.name, petName, petAge)
+      // }
+
+      // Function.prototype.bind = function (newObj) {
+      //   let that = this // 这里的this就是指fn函数，因为是由fn调用的
+      //   let bindArgs = Array.prototype.slice.call(arguments, 1) // 取fn2.bind传递进来的第2个之后的参数
+      //   return function () {
+      //     let args = Array.prototype.slice.call(arguments) // 获取bindFn2调用的时候传递进来的参数
+      //     console.log(args)
+      //     return that.apply(newObj, bindArgs.concat(args))
+      //   }
+      // }
+
+      let bindFn2 = fn2.bind(obj2, "阿呆");
+      bindFn2(5);
+
+      // 第三版：函数绑定之后可以当做构造函数使用，此时的this应该指向new的对象
+      // 2. 如果像fn原型上添加方法，bind之后返回的函数应该也能获得该方法
+      const obj3 = { name: "hello" };
+      const fn3 = function (petName, petAge) {
+        console.log(this.name, petName, petAge);
+      };
+
+      fn3.prototype.flag = "test";
+
+      Function.prototype.bind = function (newObj) {
+        let that = this; // 这里的this就是指fn函数，因为是由fn调用的
+        let bindArgs = Array.prototype.slice.call(arguments, 1); // 取fn2.bind传递进来的第2个之后的参数
+        function dummyFn() {}
+        function bounded() {
+          let args = Array.prototype.slice.call(arguments); // 获取bindFn2调用的时候传递进来的参数
+          return that.apply(
+            this instanceof bounded ? this : newObj, // 通过instance判断是否为new的实例,this instanceof bounded表示是由new构建出来的对象调用的
+            bindArgs.concat(args)
+          );
+        }
+        dummyFn.prototype = this.prototype;
+        bounded.prototype = new dummyFn();
+        return bounded;
+      };
+
+      let bindFn3 = fn3.bind(obj2, "阿呆");
+      let instance = new bindFn3(9); //undefined '阿呆' 9
+      console.log(instance.flag); //test
+    </script>
+  </body>
+</html>

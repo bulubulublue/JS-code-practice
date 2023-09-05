@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      迭代器：从一个数据集合中按照一定顺序，不断地取数据的过程
+
+      迭代和遍历的区别：
+      1. 迭代强调依次取出，不能确定可以取出的值有多少，也不能保证把值全部取出来
+      2. 遍历必须保证数据的长度，循环不断地全部取出
+    */
+
+      let arr = [10, 20, 30]
+
+      let iter = arr[Symbol.iterator]()
+
+      console.log(iter.next()) //{value:10,done:false}
+      console.log(iter.next()) //{value:20,done:false}
+      console.log(iter.next()) //{value:30,done:false}
+      console.log(iter.next()) //{value:undefined,done:true}
+    </script>
+  </body>
+</html>

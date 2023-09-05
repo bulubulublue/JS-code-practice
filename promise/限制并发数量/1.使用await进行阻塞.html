@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class limit {
+        constructor() {
+          this.max = 2;
+          this.num = 0;
+          this.queue = [];
+        }
+        async add(fn) {
+          if (this.num >= this.max) {
+            //在Promise内部把resolve放到任务队列中，只有当resolve被调用，后面的的代码才被执行(才会执行新的promise)
+            await new Promise((resolve) => {
+              this.queue.push(resolve);
+            });
+          }
+
+          this.num++;
+          console.log(this.queue, this.num);
+          let res = await fn();
+          this.num--;
+          if (this.queue.length) {
+            //当前任务完成后，如果任务队列里有resolve，那么就调用resolve，之前被堵住的部分就可以得到执行
+            this.queue.shift()();
+          }
+          return res;
+        }
+      }
+
+      let li = new limit();
+
+      const res1 = li.add(() =>
+        new Promise((res) => {
+          setTimeout(() => {
+            res("1");
+          }, 10000);
+        }).then((res) => console.log(res))
+      );
+
+      const res2 = li.add(() =>
+        new Promise((res) => {
+          setTimeout(() => {
+            res("2");
+          }, 20000);
+        }).then((res) => console.log(res))
+      );
+
+      const res3 = li.add(() =>
+        new Promise((res) => {
+          setTimeout(() => {
+            res("3");
+          }, 30000);
+        }).then((res) => console.log(res))
+      );
+
+      console.log(res1, res2, res3);
+    </script>
+  </body>
+</html>

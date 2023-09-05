@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        一个数组中只有一个数字是奇数次，如何找出这个数
+        使用一个变量0，分别异或每个值，如果是偶数次，则结果是eor^num^num,会相互消除
+        所以最后剩下的数就是那个奇数次的数
+      */
+      const arr = [1, 1, 2, 2, 3, 3, 3, 4, 5, 3, 4]
+      let eor = 0
+      arr.forEach((i) => {
+        eor ^= i
+      })
+
+      console.log(eor)
+
+      // 一个数组中有两个个数字是奇数次，如何找出这个数
+      /*
+        step1: 使用变量0分别异或每个值，最后得到a^b，因为a和b的值不同，所以eor必不为0
+        step2: 假设eor的第n位不为0，a和b中必定只有一个在第n为值不为0，使用变量1值为0，分别异或第n位不为0的数，
+              最后得到的结果就是a或者b
+        step3：将eor^eor1, 就能得到另外一个数
+      */
+      const arr2 = [1, 1, 2, 2, 3, 3, 3, 4, 5, 3, 4, 4]
+      let ee = 0
+      arr2.forEach((i) => {
+        ee ^= i
+      })
+
+      console.log(ee)
+
+      // 获得ee最后侧为1的数
+      let rightOne = ee & (~ee + 1)
+
+      let ee2 = 0
+      arr2.forEach((i) => {
+        if ((i & rightOne) == 0) {
+          ee2 ^= i
+        }
+      })
+
+      const a = ee2
+      const b = ee ^ ee2
+      console.log(a, b)
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 使用继承实现, 好处：可以给每个类添加自定义的方法
+      class User {
+        constructor(name, role, pages) {
+          this.name = name
+          this.role = role
+          this.pages = pages
+        }
+
+        welcome() {
+          console.log('welcome back')
+        }
+
+        dataShow() {
+          throw new Error('抽象方法需要被实现')
+        }
+      }
+
+      class SuperAdmin extends User {
+        constructor(name) {
+          super(name, 'super-admin', ['page1', 'page2', 'page3'])
+        }
+
+        // 父方法重写
+        dataShow() {
+          console.log('super admin show')
+        }
+
+        addRight() {}
+
+        addUser() {}
+      }
+
+      class Admin extends User {
+        constructor(name) {
+          super(name, 'admin', ['page1', 'page2', 'page3'])
+        }
+
+        // 父方法重写
+        dataShow() {}
+      }
+
+      function getAbstractUserFactory(role) {
+        switch (role) {
+          case 'super-admin':
+            return SuperAdmin
+            break
+          case 'admin':
+            return Admin
+            break
+          default:
+            break
+        }
+      }
+
+      let userClass = getAbstractUserFactory('super-admin') // 接收到的就是类
+      // 创建实例
+      let user = new userClass('name1')
+      user.dataShow()
+    </script>
+  </body>
+</html>

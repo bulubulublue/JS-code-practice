@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function Animal(colors) {
+        this.colors = colors;
+      }
+
+      Animal.prototype.bark = function () {
+        console.log('bark');
+      };
+
+      function Dog(name, colors) {
+        Animal.call(this, colors);
+        this.name = name;
+      }
+
+      Dog.prototype = new Animal()
+      Dog.prototype.constructor = Dog
+
+      const dog1 = new Dog('dog1',['red'])
+      console.log(dog1)
+      dog1.bark()
+    </script>
+  </body>
+</html>

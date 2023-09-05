@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function myPromiseAll(promiseArr) {
+        return new Promise(function (resolve, reject) {
+          if (!Array.isArray(promiseArr))
+            return reject(new Error("必须是数组"));
+          if (!promiseArr.length) return resolve([]);
+          let arr = [];
+          let count = 0;
+
+          for (let i = 0; i < promiseArr.length; i++) {
+            // 有可能是promise，有可能不是，所以用promise.resolve都转为promise
+            Promise.resolve(promiseArr[i])
+              .then((result) => {
+                // 不能直接用push，因为promise执行完的顺序可能和初始的不一样，所以用i来存储
+                count++;
+                arr[i] = result;
+                // 遍历完数组，则返回结果
+                // 不能用arr.length判断数组长度，因为arr=[],arr[3]='xxx',此时长度为判定为4
+                if (count === promiseArr.length) {
+                  resolve(arr);
+                }
+              })
+              .catch((err) => {
+                // 如果某个promise有错，则返回错误
+                reject(err);
+              });
+          }
+        });
+      }
+
+      // 使用
+      const promise1 = new Promise((res, rej) => {
+        setTimeout(() => {
+          res("ok");
+        }, 1000);
+      });
+
+      const promise2 = new Promise((res, rej) => {
+        setTimeout(() => {
+          res("ok2");
+        }, 2000);
+      });
+
+      myAll([promise1, promise2])
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
+    </script>
+  </body>
+</html>

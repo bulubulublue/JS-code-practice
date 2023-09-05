@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="myDiv"></div>
+    <script>
+      const myDiv = document.querySelector('.myDiv')
+      // typeof: 可以判断基本数据类型，不能判断Array和Null等
+      console.log(typeof 1) // number
+      console.log(typeof 'abc') // string
+      console.log(typeof [1,2,3]) // object
+      console.log(typeof {name:'zhangsan'}) // object
+      console.log(typeof function(){}) // function
+      console.log(typeof myDiv) // object
+
+      // instanceof: 可以判断对象类型，不能判断基本类型, 返回布尔值
+      function Person(){}
+      const p = new Person()
+      console.log(p instanceof Person) //true
+      
+      // Object.toString: 可以判断基础类型，array等，对于对象只是返回object
+      console.log(Object.prototype.toString.call('123')) // [object String]
+      console.log(Object.prototype.toString.call([1,2,3])) // [object String]
+      console.log(Object.prototype.toString.call({name:'zhangsan'})) //[object Object]
+      console.log(Object.prototype.toString.call(myDiv)) // [object HTMLDivElement]
+
+      // 使用constructor.name可以判断对象的构造函数
+      console.log(p.constructor.name) //Person
+
+      //最终版：可以使用Object.prototype.toString判断类型，再用constructor判断name
+      function getType(target){
+        // let dataType = target instanceof Element ? 'Element' : Object.prototype.toString.call(target).replace(/\[object\s(.+)\]/,'$1')
+        
+        let dataType = Object.prototype.toString.call(target).replace(/\[object\s(.+)\]/,'$1')
+        
+        if(dataType === 'Object'){
+          return target.constructor.name
+        }
+
+        return dataType
+      }
+
+      console.log('==============test==============')
+      console.log(getType(p)) //Person
+      console.log(getType(function(){})) // Function
+      console.log(getType(123)) // Number
+      console.log(getType([1,2,3])) // Array
+      console.log(getType(myDiv)) // Element
+
+
+    </script>
+  </body>
+</html>

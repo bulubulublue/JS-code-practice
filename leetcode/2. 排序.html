@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 冒泡排序
+      let arr = [10, 11, 2, 6, 3, 8]
+
+      function bubbleSort() {
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[j] < arr[i]) {
+              const temp = arr[i]
+              arr[i] = arr[j]
+              arr[j] = temp
+            }
+          }
+        }
+      }
+
+      //选择排序
+      /*
+        0-n个数：选择最小值，放到0的位置
+        1-n个数，选择最小值，放到1的位置
+        ...
+        i-n个数，选择最小值，放到i的位置
+
+      */
+      function selectSort(arr) {
+        let len = arr.length
+        let index // 最小值索引
+        for (let i = 0; i < len - 1; i++) {
+          index = i
+          for (let j = i + 1; j < len; j++) {
+            if (arr[index] > arr[j]) {
+              index = j // 最小值
+            }
+          }
+
+          if (index != i) {
+            // 如果当前i不是最小值，则交换i和最小值的位置
+            let temp = arr[i]
+            arr[i] = arr[index]
+            arr[index] = temp
+          }
+        }
+
+        return arr
+      }
+
+      /*
+        插入排序: 复杂度：O(n^2)
+        第0个数，和第0个数比较保证有序
+        第1个数：和第0个数比较，保证0-1上有序
+        第2个数：分别和第1个，第0个比较，如果小于第1个，则插入到第1个数前面保证0-2上有序
+        ...
+        [10, 11, 2, 6, 3, 8]
+      */
+
+      function insertSort(arr) {
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = i - 1; j >= 0 && arr[j] > arr[j + 1]; j--) {
+            swap(arr, j, j + 1)
+          }
+        }
+
+        return arr
+      }
+
+      function swap(arr, j, i) {
+        arr[i] = arr[j] ^ arr[i]
+        arr[j] = arr[j] ^ arr[i]
+        arr[i] = arr[j] ^ arr[i]
+      }
+
+      console.log('insert sort', insertSort(arr))
+
+      console.log('merge sort', mergeSort(arr, 0, arr.length - 1))
+    </script>
+  </body>
+</html>

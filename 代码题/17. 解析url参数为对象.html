@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let httpUrlStr = "https://coder.itclan.cn?name=itclanCoder&study=css";
+
+      function transform(url) {
+        const params = url.substring(url.indexOf("?") + 1).split("&");
+        const res = {};
+
+        params.forEach((item) => {
+          let [key, val] = item.split("=");
+          val = decodeURIComponent(val);
+
+          // 如果是数字，转为数字格式
+          val = /^\d+$/.test(val) ? parseFloat(val) : val;
+
+          // 如果是重复的key
+          if (res.hasOwnProperty(key)) {
+            res[key] = [].concat(res[key], val);
+          } else {
+            res[key] = val;
+          }
+        });
+
+        return res;
+      }
+
+      // 使用正则
+      function transform1(url) {
+        console.log(url.match(/([^?=&]+)(=([^&]*))/g)); //['name=itclanCoder', 'study=css']
+        url
+          .match(/([^?=&]+)(=([^&]*))/g)
+          .reduce(
+            (a, v) => (
+              (a[v.slice(0, v.indexOf("="))] = v.slice(v.indexOf("=") + 1)), a
+            ),
+            {}
+          );
+      }
+
+      console.log(transform1(httpUrlStr));
+
+      // 使用循环写
+      function transform2(url) {
+        let isParamStart = false;
+        let isKey = true;
+        let key = "";
+        let val = "";
+        let res = {};
+        for (let i = 0; i < url.length; i++) {
+          if (url.charAt(i) === "?" && !isParamStart) {
+            isParamStart = true;
+            continue;
+          }
+
+          if (isParamStart) {
+            if (url.charAt(i) === "=" && isKey) {
+              isKey = false;
+              continue;
+            }
+
+            if (url.charAt(i) === "&") {
+              res[key] = val;
+              isKey = true;
+              key = "";
+              val = "";
+              continue;
+            }
+
+            if (isKey) {
+              key += url.charAt(i);
+            } else {
+              val += url.charAt(i);
+            }
+          }
+        }
+
+        res[key] = val;
+
+        return res;
+      }
+
+      console.log(transform2(httpUrlStr));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // apply方法
+      const obj = {
+        age: 18,
+      }
+
+      function fn(a, b, c) {
+        return this.age + a + b + c
+      }
+
+      // 老写法
+      console.log(fn.apply(obj, [1, 2, 3])) // 24
+
+      // 新写法
+      console.log(Reflect.apply(fn, obj, [1, 2, 3])) // 24
+
+      // 构造函数
+      function Person(name, age) {
+        this.name = name
+        this.age = age
+      }
+
+      // 旧写法
+      const p1 = new Person('person1', 18)
+
+      //新写法
+      const p2 = Reflect.construct(Person, ['person2', 20])
+
+      // get
+      const obj2 = {
+        name: 'person3',
+        age: 18,
+        get info() {
+          console.log('this=', this, name, this.age)
+          return `${this.name} ${this.age}`
+        },
+      }
+
+      const obj3 = {
+        name: 'person4',
+        age: 20,
+      }
+
+      console.log(Reflect.get(obj2, 'name')) //person3
+      console.log(Reflect.get(obj2, 'info')) // person3 18
+      //传入第三个参数，会改变this指向
+      console.log(Reflect.get(obj2, 'info', obj3)) //person4 20
+
+      console.log('==============================')
+      // proxy和reflect
+      const person5 = {
+        name: 'zhangsan',
+        age: 20,
+      }
+
+      let proxyObj = new Proxy(person5, {
+        get: function (target, key, receiver) {
+          if (key === 'name') {
+            return 'proxy name'
+          }
+          return Reflect.get(target, key)
+        },
+      })
+
+      console.log(proxyObj.name) //proxy name
+      console.log(proxyObj.age) //20
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class User {
+        constructor(role, pages) {
+          this.role = role
+          this.pages = pages
+        }
+
+        // 采用static，允许通过User.Userfactory访问
+        static UserFactory(role) {
+          switch (role) {
+            case 'super-admin':
+              return new User('super-admin', ['page1', 'page2', 'page3'])
+              break
+            case 'manage':
+              return new User('manage', ['page1', 'page2', 'page3', 'page4'])
+              break
+            default:
+              break
+          }
+        }
+      }
+
+      const user1 = User.UserFactory('super-admin')
+    </script>
+  </body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="test1">click</button>
+    <button class="test2">click2</button>
+    <button class="test3">click3</button>
+    <button class="test4">click4</button>
+    <button class="test5">click5</button>
+    <button class="cancel">cancel debounce</button>
+    <script>
+      // 1. 乞丐版
+      function debounce(fn, delay) {
+        let timer;
+
+        return function () {
+          clearTimeout(timer);
+          timer = setTimeout(fn, delay);
+        };
+      }
+
+      // 测试
+      const btn1 = document.querySelector(".test1");
+      btn1.addEventListener("click", debounce(handleClick, 2000));
+
+      btn1.addEventListener("click", handleClick);
+
+      function handleClick(e) {
+        // 当不使用debounce的时候，this 指向<button>click</button>
+        // 当使用debounce的时候，this指向window
+        console.log(this);
+      }
+
+      // 2. 修正this的指向
+      function debounce2(fn, delay) {
+        let timer;
+
+        return function () {
+          let context = this;
+
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            fn.apply(this);
+          }, delay);
+        };
+      }
+
+      // 测试2
+      const btn2 = document.querySelector(".test2");
+      btn2.addEventListener("click", debounce2(handleClick2, 2000));
+
+      function handleClick2(e) {
+        //this 指向<button>click</button>
+        console.log(this);
+      }
+
+      // 3. 添加接收参数，回调函数默认需要可以接收event参数
+      function debounce3(fn, delay) {
+        let timer;
+
+        return function (...args) {
+          let context = this;
+
+          clearTimeout(timer);
+
+          timer = setTimeout(() => {
+            fn.apply(this, args);
+          }, delay);
+        };
+      }
+
+      // 测试3
+      const btn3 = document.querySelector(".test3");
+      btn3.addEventListener("click", debounce3(handleClick3, 2000));
+
+      function handleClick3(e) {
+        //this 指向<button>click</button>
+        console.log(this);
+        console.log(e.target);
+      }
+
+      // 4. 使函数先立即执行一次，然后再进行debounce
+      function debounce4(fn, delay, immediate) {
+        let timer;
+
+        return function (...args) {
+          if (timer) clearTimeout(timer);
+
+          // 如果需要立即执行
+          if (immediate) {
+            // 没有timer，说明是第一次调用，或者已经过了n秒
+            const canRun = !timer;
+
+            // n秒之后清空timer，所以处于可调用状态
+            timer = setTimeout(() => {
+              timer = null;
+            }, delay);
+
+            if (canRun) {
+              fn.apply(this, args);
+            }
+          } else {
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+            }, delay);
+          }
+        };
+      }
+
+      // 测试4
+      const btn4 = document.querySelector(".test4");
+      btn4.addEventListener("click", debounce4(handleClick4, 2000, true));
+
+      function handleClick4(e) {
+        //this 指向<button>click</button>
+        console.log(this);
+      }
+
+      // 5. 设置取消debounce
+      // 比如说我 debounce 的时间间隔是 10 秒钟，immediate 为 true，这样的话，我只有等 10 秒后才能重新触发事件，
+      // 现在我希望有一个按钮，点击后，取消防抖，这样我再去触发，就可以又立刻执行啦
+      function debounce5(fn, delay, immediate) {
+        let timer;
+
+        const debounced = function (...args) {
+          if (timer) clearTimeout(timer);
+
+          // 如果需要立即执行
+          if (immediate) {
+            // 没有timer，说明是第一次调用，或者已经过了n秒
+            const canRun = !timer;
+
+            // n秒之后清空timer，所以处于可调用状态
+            timer = setTimeout(() => {
+              timer = null;
+            }, delay);
+
+            if (canRun) {
+              fn.apply(this, args);
+            }
+          } else {
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+            }, delay);
+          }
+        };
+
+        // 添加cancel方法
+        debounced.cancel = () => {
+          clearTimeout(timer);
+          timer = null;
+        };
+
+        return debounced;
+      }
+
+      // 测试5
+      const btn5 = document.querySelector(".test5");
+      const cancelBtn = document.querySelector('.cancel')
+      const callbackFn = debounce5(handleClick5, 2000, true)
+      
+
+      function handleClick5(e) {
+        //this 指向<button>click</button>
+        console.log(this);
+      }
+
+      btn5.addEventListener("click", callbackFn);
+      cancelBtn.addEventListener('click',()=>{
+        callbackFn.cancel()
+      })
+    </script>
+  </body>
+</html>

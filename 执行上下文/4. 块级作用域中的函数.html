@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      console.log(foo)
+
+      if (true) {
+        let str = 'some str inner'
+        function foo() {
+          console.log('in block')
+          console.log(str)
+        }
+      }
+
+      foo()
+
+      /*
+          在块级作用域中，初始化时块级里面函数会检测是否有全局对象和全局scope的变量重名，重名就不做处理，不处理，等到执行时因为let声明的原因变量在全局scope中，而function 会指向全局对象，全局对象中查找不到，调用就会报错。而使用var 声明时变量在全局对象上，function 可以查找，调用成功。
+      */
+      let foo // 如果改为var则不会报错
+      if (true) {
+        let str = 'some str inner'
+        function foo() {
+          console.log('in block')
+          console.log(str)
+        }
+      }
+      foo() // 这里调用会报错
+    </script>
+  </body>
+</html>

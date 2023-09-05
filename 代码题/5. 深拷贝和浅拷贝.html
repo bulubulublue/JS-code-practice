@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 浅拷贝
+      const obj = {
+        name: "zhangsan",
+        age: 10,
+        child: {
+          name: "lisi",
+          age: 5,
+        },
+        hobbies: ["aa", "bb", "cc"],
+      };
+
+      function shallowCopy(target) {
+        if (typeof target !== "object") return;
+        let res = Array.isArray(target) ? [] : {};
+
+        for (let key in target) {
+          if (target.hasOwnProperty(key)) {
+            res[key] = target[key];
+          }
+        }
+
+        return res;
+      }
+
+      console.log(shallowCopy(obj));
+
+      // 方法一：乞丐版
+      // 不适用于拷贝其他引用类型、拷贝函数、循环引用等情况。
+      JSON.parse(JSON.stringify(obj));
+
+      // 方法二：简单版，只考虑array和object
+      function deepCopy(target) {
+        if (typeof target !== "object") {
+          return target;
+        }
+
+        let res = Array.isArray(target) ? [] : {};
+
+        for (let key in target) {
+          if (target.hasOwnProperty(key)) {
+            res[key] = deepCopy(target[key]);
+          }
+        }
+
+        return res;
+      }
+
+      const res = deepCopy(obj);
+      res.hobbies.push("ccc");
+      console.log(res, obj);
+
+      console.log("======================方法三=====================");
+      // 方法三：兼容考虑循环引用的问题
+      const obj2 = {
+        name: "zhangsan",
+        age: 10,
+        child: {
+          name: "lisi",
+          age: 5,
+        },
+        hobbies: ["aa", "bb", "cc"],
+      };
+
+      obj2.spouse = obj2;
+
+      function deepCopy2(target, map = new Map()) {
+        if (typeof target !== "object") return target;
+
+        if (map.get(target)) return map.get(target);
+
+        const res = Array.isArray(target) ? [] : {};
+
+        map.set(target, res);
+        console.log(map)
+
+        for (let key in target) {
+          if (target.hasOwnProperty(key)) {
+            res[key] = deepCopy2(target[key],map);
+          }
+        }
+
+        return res;
+      }
+
+      const cloneObj = deepCopy2(obj2);
+      cloneObj.spouse.name = 'wangwang'
+      console.log(obj2,cloneObj)
+    </script>
+  </body>
+</html>

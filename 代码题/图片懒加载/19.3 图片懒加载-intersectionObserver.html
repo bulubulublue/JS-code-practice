@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        img {
+        display: block;
+        margin-bottom: 5px;
+        width: 600px;
+        height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // 创建图片dom
+      for (let index = 0; index < 10; index++) {
+        let img = document.createElement("img");
+        img.src = "../../images/loading.jpg";
+        img.dataset.src = `../../images/${index + 1}.jpg`;
+        document.body.appendChild(img);
+        img = null;
+      }
+
+      let imgList = [...document.querySelectorAll("img")];
+
+      const ob = new IntersectionObserver(loadImg);
+
+      function loadImg(changes) {
+        changes.forEach((change) => {
+          // 目标出现在可视区域中
+          if (change.isIntersecting) {
+            const img = change.target; // 获取目标
+            img.src = img.dataset.src;
+            img.removeAttribute("data-src");
+            // 取消观察该目标
+            ob.unobserve(img);
+          }
+        });
+      }
+
+      // 给每个img元素添加observe
+      imgList.forEach((item) => {
+        ob.observe(item);
+      });
+    </script>
+  </body>
+</html>

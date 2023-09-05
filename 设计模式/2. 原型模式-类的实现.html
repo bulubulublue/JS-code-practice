@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 以下方式在构造对象的时候代码比较重复
+      var employee1 = {
+        name: 'name1',
+        age: 12,
+      }
+
+      var employee2 = {
+        name: 'name2',
+        age: 14,
+      }
+
+      // 通过构造函数来生成对象
+      class Employee {
+        constructor(name, age) {
+          this.name = name
+          this.age = age
+        }
+
+        // 这样定义的方法也是放在原型上的
+        sayHi() {
+          console.log('hi')
+        }
+      }
+
+      new Employee('name1', 100)
+    </script>
+  </body>
+</html>

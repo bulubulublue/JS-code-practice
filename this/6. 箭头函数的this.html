@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      默认绑定和隐式绑定对箭头函数无效
+      箭头函数没有自己的this，所以会找父级作用域中的this
+      箭头函数不允许作为构造函数执行
+    */
+
+      // 示例1： 箭头函数会使用父级作用域的this
+      const obj = {
+        name: 'test',
+        foo: function () {
+          console.log(this) // Object {name:"test",foo:fn}
+
+          var fn = () => {
+            console.log(this) // Object {name:"test",foo:fn}
+          }
+
+          fn()
+        },
+      }
+
+      obj.foo()
+
+      // 示例2：父级的this改变，箭头函数的this也会改变
+      const obj2 = {
+        name: 'test',
+        foo: function () {
+          console.log(this) // {name: 'xiaohong'}
+
+          var fn = () => {
+            console.log(this) // {name: 'xiaohong'}
+          }
+
+          fn()
+        },
+      }
+
+      const obj3 = {
+        name: 'xiaohong',
+      }
+
+      obj.foo.call(obj3)
+
+      // 示例3：隐式绑定对箭头函数没有用
+      const obj4 = {
+        name: 'test',
+        foo: () => {
+          console.log(this) //window
+        },
+      }
+
+      obj4.foo()
+    </script>
+  </body>
+</html>

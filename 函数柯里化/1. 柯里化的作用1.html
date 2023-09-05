@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 使用函数柯里化可以实现参数复用
+      /*
+     假设有个函数接收 请求路径，请求方法，请求参数三个参数，
+    而请求方法一直是一样的值
+    */
+
+      const http = function (method, url, params) {
+        console.log(method, url, params)
+      }
+
+      // 调用时, 就每次都需要传入get
+      http('get', 'xxx1', 'data1')
+      http('get', 'xxx2', 'data2')
+      http('get', 'xxx3', 'data3')
+
+      // 可以使用柯里化进行优化
+      const httpCurring = function (method) {
+        return function (url, params) {
+          console.log(method, url, params)
+        }
+      }
+
+      // 调用时，先定义method为get的方法
+      const getHttp = httpCurring('get') // 这里返回的还是一个方法
+      getHttp('xxx1', 'data1')
+      getHttp('xxx2', 'data2')
+      getHttp('xxx3', 'data3')
+    </script>
+  </body>
+</html>

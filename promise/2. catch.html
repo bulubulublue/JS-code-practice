@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 1. 如果then中已经对reject进行了处理，则不会走到catch这里
+      Promise.reject("err!!!")
+        .then(
+          (res) => {
+            console.log("success", res);
+          },
+          (err) => {
+            console.log("error", err);
+          }
+        )
+        .catch((err) => {
+          console.log("catch", err);
+        });
+
+      //2. res/rej之后的代码依然会运行
+      new Promise((res, rej) => {
+        res("ok");
+        console.log("after res");
+      });
+    </script>
+  </body>
+</html>

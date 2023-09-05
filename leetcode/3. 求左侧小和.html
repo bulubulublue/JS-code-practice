@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const arr = [10, 11, 2, 6, 3, 8]
+
+      /*
+      采用归并排序的方法，
+      在排序数组时，同时计算右边比左边大的和
+    */
+
+      function mergeSort(arr, l, r) {
+        if (l === r) return
+        const mid = Math.floor(l + (r - l) / 2)
+        mergeSort(arr, l, mid)
+        mergeSort(arr, mid + 1, r)
+
+        merge(arr, l, r, mid)
+      }
+
+      function merge(arr, l, r, m) {
+        // console.log(left, right)
+        let res = []
+        let p1 = l
+        let p2 = m + 1
+        let count = 0
+
+        while (p1 <= m && p2 <= r) {
+          if (arr[p1] < arr[p2]) {
+            res.push(arr[p1])
+            p1++
+            count += arr[p1] * (r - p2 + 1)
+          } else {
+            res.push(arr[p2])
+            p2++
+          }
+        }
+
+        if (p1 >= m) {
+          res = [...res, ...arr.slice(p1, m)]
+        } else {
+          res = [...res, ...arr.slice(p2, r)]
+        }
+
+        for (let i = 0; i < res.length; i++) {
+          arr[l + i] = res[0]
+        }
+
+        return count
+      }
+
+      mergeSort(arr, 0, arr.length - 1)
+      console.log(arr)
+    </script>
+  </body>
+</html>

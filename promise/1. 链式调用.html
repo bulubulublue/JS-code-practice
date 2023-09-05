@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //每次的 `then` 都是一个全新的 `promise`，默认 then 返回的 promise 状态是 fulfilled
+      let promise = new Promise((resolve, reject) => {
+        resolve('fulfilled')
+      })
+        .then((resolve) => {
+          console.log(resolve) // fulfilled
+          return 'aaa'
+        })
+        .then((resolve) => {
+          console.log(resolve) // aaa
+        })
+
+      const hdcms = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('第一个Promise')
+        }, 2000)
+      })
+      const houdunren = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject('第二个异步')
+        }, 1000)
+      })
+      Promise.race([hdcms, houdunren])
+        .then((results) => {
+          console.log(results)
+        })
+        .catch((msg) => {
+          console.log('catch', msg) // catch 第二个异步
+        })
+    </script>
+  </body>
+</html>

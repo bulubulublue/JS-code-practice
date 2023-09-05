@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 单例模式：保证一个类仅有一个实例，并提供一个访问它的全局访问点
+      // 主要解决一个全局使用的类频繁地创建和销毁，占用内存
+
+      class Single {
+        constructor(name, age) {
+          // 将instance挂载类上
+          if (!Single.instance) {
+            this.name = name
+            this.age = age
+            Single.instance = this
+          }
+
+          return Single.instance
+        }
+      }
+
+      new Single('name1', 10)
+      console.log(new Single('name2', 20)) //结果还是上一个实例的值{name: 'name1', age: 10}
+    </script>
+  </body>
+</html>

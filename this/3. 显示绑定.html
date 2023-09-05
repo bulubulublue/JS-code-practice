@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 3. 显示绑定：即用call，apply，bind来更改this的指向
+      const obj3 = {
+        name: 'test',
+        foo: function () {
+          console.log(this) // obj3
+        },
+      }
+
+      obj3.foo()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+            forEach(callbackFn, thisArg?)
+            callbackFn: 接收三个参数：
+            element，index，array
+            thisArg:callbackFn中的this指向
+
+            注意：forEach不支持continue和break
+        */
+
+      Array.prototype.myForEach = function (callbackFn, thisArg) {
+        // this即调用myForEach的元素，即原数组
+        if (this == null) {
+          throw new TypeError("this is null or not defined");
+        }
+        if (typeof callbackFn !== "function") {
+          throw new TypeError(callbackFn + " is not a function");
+        }
+
+        const arr = this
+        for(let index = 0 ; index < arr.length ; index++){
+            callbackFn.call(thisArg, arr[index],index,arr)
+        }
+      };
+
+      // 测试
+      const arr = [1,2,4]
+      arr.myForEach((item,index,arr)=>{
+        console.log(item,index,arr)
+      })
+    </script>
+  </body>
+</html>

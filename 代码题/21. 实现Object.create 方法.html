@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Object.create方法就是创建一个obj，使obj.__proto__ = 传入的参数
+      // 不传入第二个参数的时候，返回的是{}
+      // 第一个参数必须是object或者null
+      Object.myCreate = function (baseObj, attrs) {
+        if (typeof baseObj !== "object" && typeof baseObj !== "Function") {
+          throw new Error("error");
+        }
+
+        if (attrs === null) {
+          throw new Error("cannot be null");
+        }
+
+        function dummyFn() {}
+        dummyFn.prototype = baseObj;
+        const obj = new dummyFn();
+
+        if (attrs) {
+          Object.defineProperties(obj, attrs);
+        }
+
+        if (baseObj === null) {
+          Object.setPrototypeOf(obj, null);
+        }
+
+        return obj;
+      };
+
+      const obj = {
+        name: "123",
+      };
+
+      const newObj = Object.myCreate(obj, { age: { value: 10 } });
+      console.log(newObj.__proto__ === obj);
+      console.log(newObj);
+
+      // 写法二：
+      Object.myCreate2 = function (baseObj, attrs) {
+        if (typeof baseObj !== "object" && typeof baseObj !== "Function") {
+          throw new Error("error");
+        }
+
+        if (attrs === null) {
+          throw new Error("cannot be null");
+        }
+
+        const obj = {};
+        Object.setPrototypeOf(obj, baseObj);
+
+        if (attrs) {
+          Object.defineProperties(obj, attrs);
+        }
+
+        // if (baseObj === null) {
+        //   Object.setPrototypeOf(obj, null);
+        // }
+
+        return obj;
+      };
+
+      const newObj2 = Object.myCreate2(obj, { age: { value: 10 } });
+      console.log(newObj2.__proto__ === obj);
+      console.log(Object.myCreate2(null));
+    </script>
+  </body>
+</html>

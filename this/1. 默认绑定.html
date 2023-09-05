@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 1. 单独调用的函数，this指向的就是window
+      //示例1
+      function test() {
+        console.log(this)
+      }
+
+      test() // window
+
+      // 示例2： obj中定义一个方法，并且调用方法B
+      const obj = {
+        name: 'test',
+        foo: function () {
+          console.log(this) // obj
+
+          function test() {
+            console.log(this) // window
+          }
+
+          test()
+        },
+      }
+
+      obj.foo()
+
+      // 示例3：立即执行函数
+      const obj2 = {
+        name: 'test',
+        foo: function () {
+          console.log(this)(function () {
+            console.log(this) // window
+          })()
+        },
+      }
+
+      obj.foo()
+
+      //示例4，将方法赋值给变量，通过变量调用
+      const obj3 = {
+        name: 'test',
+        foo: function () {
+          console.log(this)
+        },
+      }
+
+      const fn = obj3.foo
+      fn()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function Animal(){
+            this.colors = ['black','white']
+        }
+
+        function Dog(name){
+            this.name = name
+        }
+
+        // 继承前
+        // Dog.prototype.constructor = Dog
+
+        Dog.prototype = new Animal()
+        
+        // 继承后
+        // Dog.prototype.constructor = Animal
+
+        const dog1 = new Dog('dog1')
+        const dog2 = new Dog('dog2')
+
+        dog1.colors = ['blue']
+        console.log(dog2.colors)
+    </script>
+</body>
+</html>

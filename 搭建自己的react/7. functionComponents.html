@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      /*
+        对于函数组件，经过jsx转化后，也是一个函数
+      */
+      function App(props) {
+        return <h1>Hi {props.name}</h1>;
+      }
+
+      function AfterJSXTransformApp(props) {
+        return Didact.createElement("h1", null, "Hi ", props.name);
+      }
+      /*
+            children的数据类型：
+            INode {
+              type: string;
+              props: {
+                [key]?:value;
+                children?: INode[]
+              }
+            }
+        */
+
+      // ====================创建dom节点开始======================================
+      const isProperty = (key) => key !== "children";
+      const isNew = (prev, next) => (key) => prev[key] !== next[key];
+      const isGone = (prev, next) => (key) => !(key in next);
+      const isEvent = (key) => key.startWith("on");
+      // 参数：{type: string, props:{children?:[],[key]:value}}
+      function createDom(element) {
+        // 如果是text节点，则创建text
+        const node =
+          element.type === "text"
+            ? document.createTextNode("")
+            : document.createElement(element.type);
+
+        // 添加props属性
+
+        Object.keys(element.props)
+          .filter(isProperty)
+          .forEach((key) => {
+            node[key] = element.props[key];
+          });
+
+        return node;
+      }
+
+      // 用于更新dom节点属性的方法
+      function updateDom(dom, prevProps, nextProps) {
+        // 移除旧监听事件， 因为属性是onClick, addEventListener中对应的是'click'
+        Object.keys(prevProps)
+          .filter(isEvent)
+          .filter(
+            (key) => !(key in nextProps) || isNew(prevProps, nextProps)(key)
+          )
+          .forEach((name) => {
+            const eventType = name.toLowerCase().substring(2);
+            dom.removeEventListener(eventType, prevProps[name]);
+          });
+
+        // 删除已移除的属性
+        Object.keys(prevProps)
+          .filter(isProperty)
+          .filter(isGone(prevProps))
+          .forEach((name) => {
+            dom[name] = "";
+          });
+
+        //添加新增的属性
+        Object.keys(nextProps)
+          .filter(isProperty)
+          .filter(isNew(prevProps))
+          .forEach((name) => {
+            dom[name] = nextProps;
+          });
+
+        // 添加监听事件
+        Object.keys(nextProps)
+          .filter(isEvent)
+          .filter(isNew(prevProps, nextProps))
+          .forEach((name) => {
+            const eventType = name.toLowerCase().substring(2);
+            dom.addEventListener(eventType, nextProps[name]);
+          });
+      }
+      // ====================创建dom节点结束======================================
+
+      // ==========用于处理concurrent模式的事件循环机制-开始=========
+      function workLoop(deadline) {
+        let shouldYield = false;
+        while (nextUnitOfWork && !shouldYield) {
+          // 执行操作
+          nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+          shouldYield = deadline.timeRemaining() < 1;
+        }
+
+        // 当没有下一个需要工作的任务时，表示任务结束，开始渲染dom
+        console.log(wipRoot);
+        if (!nextUnitOfWork && wipRoot) {
+          commitRoot();
+        }
+
+        // 当没有空闲进行操作时，使用requestIdleCallback等待进行下一次操作
+        requestIdleCallback(workLoop);
+      }
+
+      // //先操作一次
+      // requestIdleCallback(workLoop);
+
+      // ==========用于处理concurrent模式的事件循环机制-结束====================
+
+      let nextUnitOfWork = null;
+      let wipRoot = null; // work in progress
+      let currentRoot = null; // 代表未更改的fiber树
+      let deletions = null; // 用于存储需要被删除的node列表
+
+      //=========================commit函数开始==============================
+
+      // 用于将node节点添加到dom上
+      function commitRoot() {
+        deletions.forEach(commitWork);
+        commitWork(wipRoot.child);
+        currentRoot = wipRoot;
+        wipRoot = null;
+      }
+
+      function commitWork(fiber) {
+        if (!fiber) return;
+
+        // 找到节点的包含dom元素的父节点
+        let domParentFiber = fiber.parent;
+        while (!domParentFiber.dom) {
+          domParentFiber = domParentFiber.parent;
+        }
+        const domParent = domParentFiber.dom;
+
+        // 新增
+        if (fiber.effectTag === "PLACEMENT" && fiber.dom !== null) {
+          domParent.appendChild(fiber.dom);
+        } else if (fiber.effectTag === "DELETION") {
+          // 删除
+          commitDeletion(fiber, domParent);
+        } else if (fiber.effectTag === "UPDATE" && fiber.dom !== null) {
+          // 更新
+          updateDom(fiber.dom, fiber.alternate.props, fiber.props);
+        }
+
+        commitWork(fiber.child);
+        commitWork(fiber.sibling);
+      }
+
+      function commitDeletion(fiber, domParent) {
+        if (fiber.dom) {
+          domParent.removeChild(fiber.dom);
+        } else {
+          commitDeletion(fiber.child, domParent);
+        }
+      }
+
+      //=========================commit函数结束===========================
+
+      // =============创建fiber树开始==========================================
+
+      // 实际操作的函数，如进行渲染等
+      // fiber: 表示当前需要操作的节点
+      // fiber的初始值见render函数(即nextUnitOfWork)
+      function performUnitOfWork(fiber) {
+        //step0: 判断是函数组件还是类组件
+        const isFunctionComponent = fiber.type instanceof Function;
+
+        if (isFunctionComponent) {
+          updateFunctionComponent(fiber);
+        } else {
+          // 类组件
+          updateHostComponent(fiber);
+        }
+
+        //step3: 返回下一个需要处理的fiber
+        // child->sibling->uncle(parent's sibling)
+        if (fiber.child) {
+          return fiber.child;
+        }
+        let nextFiber = fiber;
+        while (nextFiber) {
+          if (nextFiber.sibling) {
+            return nextFiber.sibling;
+          }
+          nextFiber = nextFiber.parent;
+        }
+      }
+
+      function updateFunctionComponent(fiber) {
+        // 调用函数来获取html
+        const children = [fiber.type(fiber.props)];
+        recouncilChildren(fiber, children);
+      }
+
+      function updateHostComponent(fiber) {
+        // step1: 处理当前fiber
+        if (!fiber.dom) {
+          fiber.dom = createDom(fiber);
+        }
+
+        // 将fiber生成的dom元素添加到parent的dom元素上, 但是如果在这个阶段就把添加dom，由于任务可能被中断，所以用户会看到不完整的ui
+        // if (fiber.parent) {
+        //   fiber.parent.dom.appendChild(fiber.dom);
+        // }
+
+        // step2: 根据children生成新的fiber对象
+        const elements = fiber.props.children;
+        recouncilChildren(fiber, elements);
+      }
+
+      // 这里的elements就是节点的children；这个方法中只遍历一个节点的所有子节点
+      function recouncilChildren(wipFiber, elements) {
+        let index = 0;
+
+        // wipFiber.alternate.child: 旧的root下的children
+        let oldFiber = wipFiber.alternate && wipFiber.alternate.child;
+        let prevSibling = null;
+
+        while (index < elements.length || oldFiber !== null) {
+          const element = elements[index];
+          let newFiber = null;
+
+          // element: 当前需要渲染的node
+          // oldFiber: 上一次渲染的node
+          const sameType =
+            oldFiber && element && element.type === oldFiber.type;
+
+          if (sameType) {
+            // 更新节点数据
+            newFiber = {
+              type: oldFiber.type,
+              props: element.props,
+              dom: oldFiber.dom,
+              parent: wipFiber,
+              alternate: oldFiber,
+              effectTag: "UPDATE",
+            };
+          }
+
+          if (element && !sameType) {
+            // 添加新节点
+            newFiber = {
+              type: element.type,
+              props: element.props,
+              dom: null, // dom在performUnitOfWork中生成
+              parent: wipFiber,
+              alternate: null,
+              effectTag: "PLACEMENT",
+            };
+          }
+
+          if (oldFiber && !sameType) {
+            // 删除旧节点
+            oldFiber.effectTag = "DELETION";
+            deletions.push(oldFiber);
+          }
+
+          // 完成第一个child后，移到第二个child
+          if (oldFiber) {
+            oldFiber = oldFiber.sibling;
+          }
+
+          // 添加到fiber树上，如果是第一个则是child，否则是sibling
+          if (index === 0) {
+            wipFiber.child = newFiber;
+          } else {
+            prevSibling.sibling = newFiber;
+          }
+
+          prevSibling = newFiber;
+          index++;
+        }
+      }
+
+      // =============创建fiber树函数结束=========================================
+
+      //====================初始化root数据开始==================================
+      // 将root节点创建为fiber
+      /*
+        react中如何调用render函数：
+        const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+        root.render(
+            <Provider store={store}>
+                <App />
+            </Provider>,
+        );
+      */
+
+      function render(element, root) {
+        wipRoot = {
+          dom: root,
+          props: {
+            children: [element],
+          },
+          // 第一次渲染：currentRoot是null，第一次渲染完，currentRoot变成了当前渲染的fiber tree，所以就等于将新的树和旧的树对比
+          alternate: currentRoot,
+        };
+
+        nextUnitOfWork = wipRoot;
+        deletions = [];
+        //先操作一次
+        requestIdleCallback(workLoop);
+      }
+
+      // 通过调用render方法来触发渲染
+      const root = document.querySelector("#root");
+      const children = {
+        type: "div",
+        props: {
+          children: [
+            {
+              type: "text",
+              props: {
+                nodeValue: "hello",
+                children: [],
+              },
+            },
+            {
+              type: "text",
+              props: {
+                nodeValue: "somebody",
+                children: [],
+              },
+            },
+          ],
+        },
+      };
+
+      render(children, root);
+
+      //===================初始化数据结束==================================
+
+      //======================模拟第二次渲染开始=======================
+      const childrenNew = {
+        type: "div",
+        props: {
+          children: [
+            {
+              type: "span",
+              props: {
+                class: "hello",
+                children: [
+                  {
+                    type: "text",
+                    props: {
+                      nodeValue: "sayHello",
+                      children: [],
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              type: "text",
+              props: {
+                nodeValue: "somebody2",
+                children: [],
+              },
+            },
+          ],
+        },
+      };
+
+      render(childrenNew, root);
+    </script>
+  </body>
+</html>

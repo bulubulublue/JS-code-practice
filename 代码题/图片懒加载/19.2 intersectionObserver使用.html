@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        .observeDiv {
+            margin-top: 1300px
+        }
+    </style>
+  </head>
+  
+  <body>
+    <div class="observeDiv">aaa</div>
+    <script>
+      /* 
+        intersectionObserver:
+        目标元素和可视窗口之间的产生交叉区域（也就是目标元素出现在可视区域时），
+        交叉区域的出现和消失会调用 IntersectionObserver 的回调函数
+      */
+
+      /* 
+        使用：
+        - callback 回调函数有一个参数（changes）是数组，每个成员都是一个 IntersectionObserverEntry 对象。
+        举例来说，如果同时有两个被观察的对象的可见性发生变化，changes 数组就会有两个成员。
+        - changes的成员对象中的属性：
+          isIntersecting：表示元素是否出现在可视窗口中
+        
+        const ob = new IntersectionObserver(function callback(changes){});
+ 
+        观察元素
+        ob.observe(element);
+        
+        不观察元素
+        ob.unobserve(element);
+      */
+
+      const observeDiv = document.querySelector('.observeDiv')
+      const ob = new IntersectionObserver(function callback(changes){
+        console.log(changes)
+      });
+
+      ob.observe(observeDiv)
+    </script>
+  </body>
+</html>

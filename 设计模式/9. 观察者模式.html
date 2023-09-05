@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 包含观察目标和观察者两类对象
+        一个目标可以有任意数目的与之相依赖的观察者
+        一个观察目标的状态发生改变，所有的观察者都将得到通知
+        当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新
+      
+        缺点：所有的实例都需要用同一个update的逻辑，无法细分功能(筛选通知，事件细分等功能)
+        */
+      class Subject {
+        constructor() {
+          this.observers = []
+        }
+
+        add(observer) {
+          this.observers.push(observer)
+        }
+
+        remove(observer) {
+          this.observers.filter((ob) => ob !== observer)
+        }
+
+        notify() {
+          this.observers.forEach((item) => {
+            item.update()
+          })
+        }
+      }
+
+      class Observer {
+        constructor(name) {
+          this.name = name
+        }
+        update() {
+          console.log('update', this.name)
+        }
+      }
+
+      const subject = new Subject()
+      const observer1 = new Observer('observer1')
+      const observer2 = new Observer('observer2')
+
+      subject.add(observer1)
+      subject.add(observer2)
+
+      subject.notify() // 调用该方法，就能通知所有observer实例，并触发实例内的update方法
+    </script>
+  </body>
+</html>

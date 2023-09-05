@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .box {
+      display: flex;
+      width: 100vw;
+    }
+    .left {
+      background-color: blanchedalmond;
+      width: 30%;
+    }
+
+    .right {
+      height: 400px;
+      width: 70%;
+      background-color: burlywood;
+    }
+  </style>
+  <body>
+    <div class="header"></div>
+    <div class="box">
+      <div class="left">
+        <ul>
+          <li>首页</li>
+          <li>菜单1</li>
+          <li>菜单2</li>
+        </ul>
+      </div>
+      <div class="right">
+        <div class="bread"></div>
+      </div>
+    </div>
+    <script>
+      // 比如左侧是菜单栏，当点击菜单时，显示的面包屑也会同步更新
+      // 调度中心
+      class PubSub {
+        constructor() {
+          this.message = {}
+        }
+        subscribe(type, fn) {
+          if (!this.message[type]) {
+            this.message[type] = [fn]
+          } else {
+            this.message[type].push(fn)
+          }
+        }
+
+        unsubscribe(type, fn) {
+          if (!this.message[type]) return
+          if (!fn) {
+            this.message[type].length = 0
+          } else {
+            this.message[type] = this.message[type].filter(
+              (item) => item !== fn
+            )
+          }
+        }
+        publish(type, data) {
+          if (!this.message[type]) {
+            return
+          }
+          this.message[type].forEach((fn) => fn(data))
+        }
+      }
+
+      // // 侧边栏
+      // const subject = new Subject()
+      // // 面包屑
+      // const observer1 = new Observer('.bread')
+      // //header
+      // const observer2 = new Observer('.header')
+
+      // subject.add(observer1)
+      // subject.add(observer2)
+      function updateMenu(data) {
+        document.querySelector('.bread').innerHTML = data
+      }
+
+      function updateHeader(data) {
+        document.querySelector('.header').innerHTML = data
+      }
+
+      const pubSub = new PubSub()
+      pubSub.subscribe('updateMenu', updateMenu)
+      pubSub.subscribe('updateMenu', updateHeader)
+
+      let oli = document.querySelectorAll('.left li')
+      for (let i = 0; i < oli.length; i++) {
+        oli[i].addEventListener('click', function () {
+          pubSub.publish('updateMenu', this.innerHTML)
+        })
+      }
+    </script>
+  </body>
+</html>

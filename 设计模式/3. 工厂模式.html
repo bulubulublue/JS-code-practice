@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function User(role, pages) {
+        this.role = role
+        this.pages = pages
+      }
+
+      // 一般创建时，参数可能重复
+      const userAdmin = new User('super-admin', ['page1', 'page2', 'page3'])
+      const userManage = new User('manage', [
+        'page1',
+        'page2',
+        'page3',
+        'page4',
+      ])
+
+      // 采用工厂模式，预定义可能出现的参数
+      function UserFactory(role) {
+        switch (role) {
+          case 'super-admin':
+            return new User('super-admin', ['page1', 'page2', 'page3'])
+            break
+          case 'manage':
+            return new User('manage', ['page1', 'page2', 'page3', 'page4'])
+            break
+          default:
+            break
+        }
+      }
+
+      const user1 = UserFactory('super-admin')
+    </script>
+  </body>
+</html>

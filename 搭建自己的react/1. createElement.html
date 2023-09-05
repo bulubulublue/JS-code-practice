@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // jsx语法：
+      const element = (
+        <div id="foo">
+          <a>bar</a>
+          <b />
+        </div>
+      );
+
+      const container = document.getElementById("root");
+      ReactDOM.render(element, container);
+
+      /* 期待返回的结果:
+          createElement("div", null, a, b)
+          期待返回:
+          {
+          "type": "div",
+          "props": { "children": [a, b] }
+          }
+          如果没有children,则children为[]
+          注意：在react中对于空的children或者原始数据，并不会创建空数组，此处为了简便因而这么做
+      */
+
+      const TEXT_ELEMENT = "text";
+
+      // 自定义的createElement方法
+      function myCreateElement(type, props, ...children) {
+        return {
+          type,
+          props: {
+            ...props,
+            children: children.map((child) => {
+              return typeof child === "object"
+                ? child
+                : myCreateTextElement(child);
+            }),
+          },
+        };
+      }
+
+      // 创建textNode对象的方法
+      function myCreateTextElement(text) {
+        return {
+          type: TEXT_ELEMENT,
+          props: {
+            nodeValue: text,
+            // 这里为了方便，还是添加了children属性，在react中没有这个属性
+            children: [],
+          },
+        };
+      }
+
+      // 添加到对象中
+      const MyReact = {
+        myCreateElement,
+      };
+
+      // 调用
+      const elementOutput = MyReact.myCreateElement(
+        "div",
+        { id: "foo" },
+        MyReact.myCreateElement("a", null, "bar"),
+        MyReact.myCreateElement("b", null)
+      );
+    </script>
+  </body>
+</html>

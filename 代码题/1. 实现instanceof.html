@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      instanceof 用法
+      检测被检测对象的**构造函数**的 `prototype` 属性是否出现在某个实例对象的原型链上（检测是否为一个对象的子集）
+    */
+
+      function User(name) {
+        this.name = name;
+      }
+      function Student(age) {
+        this.age = age;
+      }
+
+      // Student.prototype
+
+      // const u = new User()
+      // console.log(u instanceof User) //true
+
+      // // Student.prototype = u
+      // Student.prototype.__proto__ = User.prototype
+      // console.dir(Student)
+
+      const b = new Student();
+      // console.dir(b)
+      // console.log(b instanceof User) // true
+
+      // 参数1：构造函数
+      // 参数2：检验的对象
+      function myInstanceof(consFunc, obj) {
+        let proto = Object.getPrototypeOf(obj); // 获取对象的原型
+        let prototype = consFunc.prototype; // 构造函数的prototype属性
+
+        // 如果obj是consFunc的instance，则proto=funcProto.prototype
+
+        while (true) {
+          if (!proto) return false;
+          if (proto === prototype) return true;
+
+          proto = Object.getPrototypeOf(proto); //根据obj一路向上找构造函数的prototype
+        }
+      }
+
+      // console.log('=======================')
+      // console.log(myInstanceof(User, b))
+
+      // 写法二
+      function myInstanceof2(fn, obj) {
+        let proto = Object.getPrototypeOf(obj);
+        const prototype = fn.prototype;
+
+        while (proto) {
+          if (proto === prototype) return true;
+          proto = Object.getPrototypeOf(proto);
+        }
+
+        return false;
+      }
+
+      console.log("=======================");
+      console.log(myInstanceof2(User, b));
+      console.log(myInstanceof2(Student, b));
+    </script>
+  </body>
+</html>

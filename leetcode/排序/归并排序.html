@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 归并排序: 复杂度O(nlogn)
+      /*
+        [10, 11, 2, 6, 3, 8]
+        分为[10,11,2]和[6,3,8]
+        [10,11,2]又分为[10,11],[2]
+        [10][11]合并为[10,11]
+        [10,11]和[2]合并为[2,10,11]
+        
+      */
+      function mergeSort(arr, l, r) {
+        if (l === r) return [arr[l]]
+        const mid = Math.floor(l + (r - l) / 2)
+        const leftArr = mergeSort(arr, l, mid)
+        const rightArr = mergeSort(arr, mid + 1, r)
+
+        return merge(leftArr, rightArr)
+      }
+
+      function merge(left, right) {
+        // console.log(left, right)
+        let indexLeft = 0
+        let indexRight = 0
+        let res = []
+
+        while (indexLeft < left.length && indexRight < right.length) {
+          if (left[indexLeft] < right[indexRight]) {
+            res.push(left[indexLeft])
+            indexLeft++
+          } else {
+            res.push(right[indexRight])
+            indexRight++
+          }
+        }
+
+        if (indexLeft >= left.length) {
+          res = [...res, ...right.slice(indexRight)]
+        } else {
+          res = [...res, ...left.slice(indexLeft)]
+        }
+
+        return res
+      }
+    </script>
+  </body>
+</html>

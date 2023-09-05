@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 1. 合并后会改变第一个参数的值
+      // 2. 可以传入多个obj
+      Object.myAssign = function (baseObj, ...newObj) {
+        if (!baseObj) {
+          throw new Error("error");
+        }
+
+        newObj.forEach((obj) => {
+          for (let key in obj) {
+            if (obj.hasOwnProperty) {
+              baseObj[key] = obj[key];
+            }
+          }
+        });
+
+        return baseObj;
+      };
+      const obj = { name: "aaa" };
+      const newObj = Object.myAssign(obj, { age: 10 }, { gender: "F" });
+      console.log("obj is", obj); //{name:'aaa',age:10}
+      console.log("newObj is", newObj); //{name:'aaa',age:10}
+    </script>
+  </body>
+</html>

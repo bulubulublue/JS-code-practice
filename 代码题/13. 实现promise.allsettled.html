@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function myPromiseAllsettled(promiseArr) {
+        return new Promise(function (resolve, reject) {
+          if (!Array.isArray(promiseArr))
+            return reject(new Error("必须是数组"));
+          if (!promiseArr.length) return resolve([]);
+          let arr = [];
+          let count = 0;
+
+          for (let i = 0; i < promiseArr.length; i++) {
+            // 有可能是promise，有可能不是，所以用promise.resolve都转为promise
+            Promise.resolve(promiseArr[i]).then(
+              (res) => {
+                result[i] = { status: "fulfilled", value: res };
+                count++;
+                if (count == promiseArr.length) resolve(result);
+              },
+              (err) => {
+                result[i] = { status: "rejected", reason: err };
+                count++;
+                if (count == promiseArr.length) resolve(result);
+              }
+            );
+          }
+        });
+      }
+
+      // 使用
+      const promise1 = new Promise((res, rej) => {
+        setTimeout(() => {
+          res("ok");
+        }, 1000);
+      });
+
+      const promise2 = new Promise((res, rej) => {
+        setTimeout(() => {
+          rej("error");
+        }, 2000);
+      });
+
+      myAllSettled([promise1, promise2]).then((res) => {
+        console.log(res);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      为了解决观察者模式中无法筛选通知，事件细分等功能
+      发布者和订阅者不用互相知道，通过第三方实现调度
+      第三方通过不同的事件，会触发不同的订阅者
+    */
+
+      // 调度中心
+      class PubSub {
+        // message: key:方法的key，value:回调函数的list
+        constructor() {
+          this.message = {}
+        }
+        // 保存type对应的函数
+        subscribe(type, fn) {
+          if (!this.message[type]) {
+            this.message[type] = [fn]
+          } else {
+            this.message[type].push(fn)
+          }
+        }
+
+        unsubscribe(type, fn) {
+          if (!this.message[type]) return
+          if (!fn) {
+            //如果不传fn，则取消所有
+            this.message[type].length = 0
+          } else {
+            this.message[type] = this.message[type].filter(
+              (item) => item !== fn
+            )
+          }
+        }
+        //根据type调用对应的方法
+        // data: 调用回调函数的参数
+        publish(type, data) {
+          if (!this.message[type]) {
+            return
+          }
+          this.message[type].forEach((fn) => fn(data))
+        }
+      }
+
+      function testA(data) {
+        console.log('testA', data)
+      }
+
+      function testB(data) {
+        console.log('testB', data)
+      }
+
+      function testC(data) {
+        console.log('testC', data)
+      }
+
+      const pubSub = new PubSub()
+      pubSub.subscribe('testA', testA)
+      pubSub.subscribe('testB', testB)
+      pubSub.subscribe('testB', testC)
+
+      pubSub.publish('testB', 'data')
+
+      pubSub.unsubscribe('testB', testC)
+      pubSub.publish('testB', 'data2')
+    </script>
+  </body>
+</html>

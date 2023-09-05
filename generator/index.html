@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function* xxfn() {
+        let _n = 1
+        yield ++_n
+        yield ++_n
+        yield ++_n
+      }
+
+      // 每个generator是相互独立的
+      let aa = xxfn()
+      let bb = xxfn()
+
+      console.log(aa.next()) // 2
+      console.log(aa.next()) // 3
+      console.log(bb.next()) // 4
+      console.log(aa.next()) // 2
+
+      console.log('========================')
+      function* xxfn2() {
+        let _n = 1
+        let _v = yield _n + 22
+        console.log('aa---' + _v)
+        yield ++_n
+        yield ++_n
+      }
+
+      let _xxfn2 = xxfn2()
+
+      // 运行代码let _v = yield _n + 22
+      console.log(_xxfn2.next()) // {value: 23, done: false}
+
+      /*
+        next传入参数，覆盖了上一个yield的返回值
+        上一个yield语句是yield _n + 22，传入'abc',就等于 yield 'abc'
+        又复制给了_v, 所以console的值就是aa---abc
+      
+      */
+      _xxfn2.next('abc')
+      // 执行最后一个yield ++_n
+      console.log(_xxfn2.next())
+    </script>
+  </body>
+</html>

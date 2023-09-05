@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class NavBar {
+        init() {
+          console.log('navbar-init')
+        }
+
+        getData() {
+          console.log('navbar-getData')
+        }
+      }
+
+      class List {
+        init() {
+          console.log('List-init')
+        }
+
+        getData() {
+          console.log('List-getData')
+        }
+      }
+
+      // 使用于有相同方法的多个对象，可以通过Creator类来统一管理方法调用的方式
+      // 建造者模式关心对象构成的过程
+      class Creator {
+        startBuild(builder) {
+          builder.init()
+          builder.getData()
+        }
+      }
+
+      const op = new Creator()
+      op.startBuild(new NavBar())
+    </script>
+  </body>
+</html>

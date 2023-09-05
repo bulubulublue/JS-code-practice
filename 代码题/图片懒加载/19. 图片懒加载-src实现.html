@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        display: block;
+        margin-bottom: 5px;
+        width: 600px;
+        height: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // 创建图片dom
+      for (let index = 0; index < 10; index++) {
+        let img = document.createElement("img");
+        img.src = "../../images/loading.jpg";
+        img.dataset.src = `../../images/${index + 1}.jpg`;
+        document.body.appendChild(img);
+        img = null;
+      }
+
+      let imgList = [...document.querySelectorAll("img")];
+      const imgLength = imgList.length;
+
+      // 初始时将src存储在data-src中，当需要加载时，再添加src属性
+      const loadImg = (function() {
+        let count = 0;
+
+        return function () {
+          const deleteIndex = [];
+          let viewHeight =
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          document.body.clientHeight //获取可视区高度，兼容不同浏览器
+          
+          imgList.forEach((img, index) => {
+            // 当图片进入页面中时，加载图片
+            const rect = img.getBoundingClientRect();
+            if (rect.top <= viewHeight) {
+              img.src = img.dataset.src;
+              deleteIndex.push(index);
+              img.removeAttribute("data-src");
+              count++
+              if(count === imgLength){
+                //当所有图片都加载完毕后，删除监听事件
+                window.removeEventListener('scroll',loadImg)
+              }
+            }
+          });
+
+          // 已加载的图片下次不再进行循环
+          imgList = imgList.filter((_, index) => !deleteIndex.includes(index));
+        };
+      })()
+
+      window.addEventListener("scroll", loadImg);
+
+      // 初始的时候调用一次，加载首屏的图片
+      loadImg();
+    </script>
+  </body>
+</html>

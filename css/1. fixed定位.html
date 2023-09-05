@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      /* 当元素祖先的 transform, perspective 或 filter 属性非 none 时，
+      容器由视口改为该祖先。 */
+      .parent {
+        position: relative;
+        height: 400px;
+        width: 400px;
+        background-color: orange;
+        transform: scale(2);
+      }
+
+      .child1 {
+        position: fixed;
+        right: 10px;
+      }
+
+      .child1,
+      .child2,
+      .child3 {
+        height: 100px;
+        width: 100px;
+      }
+
+      .child1 {
+        background-color: red;
+      }
+
+      .child2 {
+        background-color: blue;
+      }
+
+      .child3 {
+        background-color: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="parent">
+      <div class="child1"></div>
+      <div class="child2"></div>
+      <div class="child3"></div>
+    </div>
+
+    <script>
+      const p = document.querySelector('.parent')
+
+      p.addEventListener('click', (e) => {
+        e.stopPropagation()
+        p.style.border = 'solid 1px red'
+      })
+
+      document.addEventListener('click', () => {
+        p.style.border = 'none'
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+      原型链继承
+      优点：可以复用父类方法
+      缺点：1. 父类所有的引用类型数据，会被子类共享
+      */
+      function User() {
+        this.name = 'xiao ming'
+        this.foods = ['banana', 'apple']
+        this.getName = function () {
+          return this.name
+        }
+      }
+
+      // 给User的原型添加属性
+      User.prototype.getAge = () => {
+        console.log('User的prototype方法')
+        return 20
+      }
+
+      function Student() {}
+
+      // Object.create： 以参数1为原型创建一个对象
+      Student.prototype = Object.create(User.prototype)
+
+      const stuA = new Student()
+      // stuA可以调用User的方法
+      stuA.getAge()
+
+      // stuA修改User中的name和foods
+      stuA.name = 'xiao hong'
+      stuA.foods.push('grape')
+      console.log(stuA.name) //xiao hong
+      console.log(stuA.foods) // ['banana', 'apple', 'grape']
+
+      console.log('-------------------')
+
+      //此时再新建一个Student的实例stuB
+      const stuB = new Student()
+      console.log(stuB.name) //xiao ming 对于值对象，没有随stuA的改变而改变
+      console.log(stuB.foods) // ['banana', 'apple', 'grape'] 对于引用对象，由于stuA改变了，所以也改变了
+    </script>
+  </body>
+</html>

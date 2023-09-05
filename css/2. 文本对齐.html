@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .item {
+        height: 32px;
+        line-height: 32px;
+        margin-bottom: 8px;
+        width: 500px;
+      }
+
+      .label {
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        background-color: antiquewhite;
+        /* 文本两端对齐，但对最后一行无效 */
+        text-align: justify;
+      }
+
+      /* 新增一行，使该行文本不是最后一行，实现如下： */
+      .label::after {
+        display: inline-block;
+        width: 100%;
+        content: '';
+        height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="item">
+      <span class="label">labellabel aaa bbb</span>
+    </div>
+  </body>
+</html>

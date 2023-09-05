@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      Array.prototype.myFilter = function (callbackFn, thisArgs) {
+        if (this == null) {
+          throw new TypeError("this is null or not defined");
+        }
+        if (typeof callbackFn !== "function") {
+          throw new TypeError(callbackFn + " is not a function");
+        }
+
+        const arr = this;
+        const resArr = [];
+        for (let i = 0; i < arr.length; i++) {
+          const res = callbackFn.call(thisArgs, arr[i], i, arr);
+          if (res) {
+            resArr.push(arr[i]);
+          }
+        }
+
+        return resArr;
+      };
+
+      const arr = [1, 2, 4];
+      const res = arr.myFilter((item, index, arr) => {
+        console.log(item, index, arr);
+        return item < 2;
+      });
+
+      console.log(res);
+    </script>
+  </body>
+</html>

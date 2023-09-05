@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 如果一个对象拥有 [Symbol.iterator] 方法，并且该方法返回一个迭代器对象，这样的对象即可称为可迭代对象。
+      let info = {
+        bears: ['ice', 'panda', 'grizzly'],
+        [Symbol.iterator]: function () {
+          let index = 0
+          let _iterator = {
+            //这里一定要箭头函数，或者手动保存上层作用域的this
+            next: () => {
+              if (index < this.bears.length) {
+                return { done: false, value: this.bears[index++] }
+              }
+
+              return { done: true, value: undefined }
+            },
+          }
+
+          return _iterator
+        },
+      }
+
+      let iter = info[Symbol.iterator]()
+      console.log(iter.next())
+      console.log(iter.next())
+      console.log(iter.next())
+      console.log(iter.next())
+
+      //符合可迭代对象协议 就可以利用 for of 遍历
+      for (let bear of info) {
+        console.log(bear)
+      }
+      //ice panda grizzly
+    </script>
+  </body>
+</html>

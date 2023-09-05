@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function render(template, data) {
+        // \w: 与任意一个英文字母,数字或下划线匹配
+        // +: 匹配一个或者多个
+        let reg = /\{\{(\w+)\}\}/;
+        if (reg.test(template)) {
+          //['{{name}}', 'name', index: 2, input: '我是{{name}}，年龄{{age}}，性别{{sex}}', groups: undefined]
+          const key = reg.exec(template)[1];
+          const val = data[key];
+          template = template.replace(reg, val);
+          return render(template, data);
+        }
+
+        return template;
+      }
+
+      let template = "我是{{name}}，年龄{{age}}，性别{{sex}}";
+      let person = {
+        name: "布兰",
+        age: 12,
+      };
+      console.log(render(template, person)); // 我是布兰，年龄12，性别undefined
+    </script>
+  </body>
+</html>

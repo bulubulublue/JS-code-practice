@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 如果两个数字相加超过了最大安全范围，再相加会造成精度丢失的问题
+      // 解决：先转化为字符串，将字符串长度对齐，再对每个位数进行相加
+      function add(a, b) {
+        const maxLength = Math.max(a.length, b.length);
+        // padStart: 参数1：填充后字符的长度，参数2：填充的字符
+        a = a.padStart(maxLength, "0");
+        b = b.padStart(maxLength, "0");
+        console.log(a, b);
+        let res = "";
+        let isGreaterThanTen = false;
+
+        for (let i = a.length - 1; i >= 0; i--) {
+          const numA = Number(a.charAt(i));
+          const numB = Number(b.charAt(i));
+          const addRes = numA + numB + Number(isGreaterThanTen);
+
+          isGreaterThanTen = addRes >= 10;
+
+          res = (addRes % 10).toString() + res;
+        }
+
+        if (isGreaterThanTen) {
+          res = "1" + res;
+        }
+
+        return res;
+      }
+
+      let a = "9007199254740991";
+      let b = "1234567899999999999";
+
+      console.log(add(a, b));
+    </script>
+  </body>
+</html>

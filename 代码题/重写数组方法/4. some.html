@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      Array.prototype.mySome = function (callbackFn, thisArg) {
+        if (this == null) {
+          throw new TypeError("this is null or not defined");
+        }
+        if (typeof callbackFn !== "function") {
+          throw new TypeError(callbackFn + " is not a function");
+        }
+
+        const arr = this;
+
+        for (let i = 0; i < arr.length; i++) {
+          const res = callbackFn.call(thisArg, arr[i], i, arr);
+          if (res) return true;
+        }
+
+        return false;
+      };
+
+      const arr = [1, 2, 4];
+      const res = arr.mySome((item, index, arr) => {
+        return item < 2;
+      });
+
+      console.log(res);
+
+      const res2 = arr.mySome((item, index, arr) => {
+        return item > 10;
+      });
+
+      console.log(res2);
+    </script>
+  </body>
+</html>

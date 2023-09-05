@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class User {
+        constructor() {
+          this.name = 'xiao ming'
+          this.foods = ['banana', 'apple']
+          this.getName = function () {
+            return this.name
+          }
+        }
+
+        getAge() {
+          console.log('class中的方法')
+        }
+      }
+
+      // 使用extends进行继承
+      class Student extends User {}
+
+      const stuA = new Student()
+      // 可以调用父类的方法
+      stuA.getAge()
+
+      // stuA修改User中的name和foods
+      stuA.name = 'xiao hong'
+      stuA.foods.push('grape')
+      console.log(stuA.name) //xiao hong
+      console.log(stuA.foods) // ['banana', 'apple', 'grape']
+
+      console.log('-------------------')
+
+      //此时再新建一个Student的实例stuB
+      const stuB = new Student()
+      console.log(stuB.name) //xiao ming 对于值对象，没有随stuA的改变而改变
+      console.log(stuB.foods) // ['banana', 'apple'] 不受sutA的更改而影响
+    </script>
+  </body>
+</html>
