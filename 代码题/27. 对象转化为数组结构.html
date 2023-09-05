@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        [
+        {
+            id: 1,
+            text: '节点1',
+            parentId: 0 //这里用0表示为顶级节点
+        },
+        {
+            id: 2,
+            text: '节点1_1',
+            parentId: 1 //通过这个字段来确定子父级
+        }
+        ...
+    ]
+
+    转成
+    [
+        {
+            id: 1,
+            text: '节点1',
+            parentId: 0,
+            children: [
+                {
+                    id:2,
+                    text: '节点1_1',
+                    parentId:1
+                }
+            ]
+        }
+    ]
+    */
+
+      const testData = [
+        {
+          id: 1,
+          text: '节点1',
+          parentId: 0, //这里用0表示为顶级节点
+        },
+        {
+          id: 2,
+          text: '节点1_1',
+          parentId: 1, //通过这个字段来确定子父级
+        },
+      ];
+
+      function convertTree(objArr) {
+        // 先将所有对象转化为obj的形式
+        const tempObj = {};
+        const res = [];
+        objArr.forEach(item => {
+          tempObj[item.id] = item;
+        });
+
+        for (let key in tempObj) {
+          const val = tempObj[key];
+          if (val.parentId !== 0) {
+            //是子节点，找到对应的父节点
+            if (!tempObj[val.parentId].children) {
+              tempObj[val.parentId].children = [];
+            }
+            tempObj[val.parentId].children.push(val);
+          } else {
+            res.push(val);
+          }
+        }
+
+        return res;
+      }
+
+      console.log(convertTree(testData));
+    </script>
+  </body>
+</html>

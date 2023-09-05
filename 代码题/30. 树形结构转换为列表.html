@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+[
+    {
+        id: 1,
+        text: '节点1',
+        parentId: 0,
+        children: [
+            {
+                id:2,
+                text: '节点1_1',
+       
+            }
+        ]
+    }
+]
+转成
+[
+    {
+        id: 1,
+        text: '节点1',
+        parentId: 0 //这里用0表示为顶级节点
+    },
+    {
+        id: 2,
+        text: '节点1_1',
+        parentId: 1 //通过这个字段来确定子父级
+    }
+    ...
+]
+        */
+
+      /*
+            BFS: 设置一个空的栈，从顶点开始遍历，如果有子节点，则添加到最后，从前往后遍历栈
+        */
+      function convertList(data) {
+        const res = [];
+        let stack = [...data];
+
+        while (stack.length) {
+          const obj = stack.shift();
+          let newObj = { id: obj.id, text: obj.text };
+          if (obj.parentId) {
+            newObj.parentId = obj.parentId;
+          }
+          res.push(newObj);
+          if (obj.children) {
+            stack = [...stack, ...obj.children.map(item => ({ ...item, parentId: obj.id }))];
+          }
+        }
+
+        return res;
+      }
+
+      const testData = [
+        {
+          id: 1,
+          text: '节点1',
+          parentId: 0,
+          children: [
+            {
+              id: 2,
+              text: '节点1_1',
+              children: [
+                {
+                  id: 3,
+                  text: '节点1_1_1',
+                },
+              ],
+            },
+            {
+              id: 4,
+              text: '节点1_2',
+            },
+          ],
+        },
+        {
+          id: 5,
+          text: '节点2',
+        },
+      ];
+      console.log(convertList(testData));
+
+      // dfs遍历：采用递归
+      function treeToList(data) {
+        let res = [];
+        const dfs = tree => {
+          tree.forEach(item => {
+            if (item.children) {
+              dfs(item.children);
+              delete item.children;
+            }
+            res.push(item);
+          });
+        };
+        dfs(data);
+        return res;
+      }
+    </script>
+  </body>
+</html>

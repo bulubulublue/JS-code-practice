@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 有一个嵌套层次很深的对象，key 都是 a_b 形式 ，需要改成 ab 的形式，注意不能用递归。
+      {a_y: {a_z: { y_x: 6 }, b_c: 1 } } 转化为: { ay: { az: { yx: 6 }, bc: 1 } } */
+
+      const testData = { a_y: { a_z: { y_x: 6 }, b_c: 1 } };
+      function changeKey(obj) {
+        const res = {};
+        for (let key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const newKey = key.replace('_', '');
+            const val = obj[key];
+            if (val instanceof Object) {
+              res[newKey] = changeKey(obj[key]);
+            } else {
+              res[newKey] = val;
+            }
+          }
+        }
+
+        return res;
+      }
+
+      // 方法二
+      const regularExpress = obj => {
+        try {
+          const str = JSON.stringify(obj).replace(/_/g, '');
+          return JSON.parse(str);
+        } catch (error) {
+          return obj;
+        }
+      };
+
+      console.log(changeKey(testData));
+    </script>
+  </body>
+</html>

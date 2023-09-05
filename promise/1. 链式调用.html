@@ -10,33 +10,33 @@
     <script>
       //每次的 `then` 都是一个全新的 `promise`，默认 then 返回的 promise 状态是 fulfilled
       let promise = new Promise((resolve, reject) => {
-        resolve('fulfilled')
+        resolve('fulfilled');
       })
-        .then((resolve) => {
-          console.log(resolve) // fulfilled
-          return 'aaa'
+        .then(resolve => {
+          console.log(resolve); // fulfilled
+          return 'aaa'; // the的返回值会作为promise的返回值
         })
-        .then((resolve) => {
-          console.log(resolve) // aaa
-        })
+        .then(resolve => {
+          console.log(resolve); // aaa
+        });
 
       const hdcms = new Promise((resolve, reject) => {
         setTimeout(() => {
-          resolve('第一个Promise')
-        }, 2000)
-      })
+          resolve('第一个Promise');
+        }, 2000);
+      });
       const houdunren = new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject('第二个异步')
-        }, 1000)
-      })
+          reject('第二个异步');
+        }, 1000);
+      });
       Promise.race([hdcms, houdunren])
-        .then((results) => {
-          console.log(results)
+        .then(results => {
+          console.log(results);
         })
-        .catch((msg) => {
-          console.log('catch', msg) // catch 第二个异步
-        })
+        .catch(msg => {
+          console.log('catch', msg); // catch 第二个异步
+        });
     </script>
   </body>
 </html>

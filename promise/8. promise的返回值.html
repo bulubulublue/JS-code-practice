@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //1. new Promise的返回值也是一个Promise，包含res的数据
+      let res = new Promise((res, rej) => {
+        res('res data');
+      });
+
+      console.log(res); // Promise;fulfilled;'res data'
+
+      // 2. new Promise使用then，then的返回值也是一个promise，状态为fulfilled
+      let res2 = new Promise((res, rej) => {
+        res('res data 2');
+      }).then(data => {
+        console.log(data);
+      });
+
+      console.log(res2); // Promise;fulfilled;undefined
+
+      res2.then(data => console.log(data)); // undefined
+
+      // 3. then中如果有返回值，会作为新的promise的返回值
+      let res3 = new Promise((res, rej) => {
+        res('res data 2');
+      }).then(data => {
+        console.log(data);
+        return '123';
+      });
+
+      console.log(res3); // Promise;fulfilled;'123'
+      res3.then(data => console.log(data)); // '123'
+
+      // 4. 如果then返回一个promise, 返回值就会变成新的promise
+      let res4 = new Promise((res, rej) => {
+        res('res data 3');
+      }).then(() => {
+        return new Promise((res, rej) => {
+          res('then promise');
+        });
+      });
+
+      console.log(res4); // Promise;fulfilled;'then promise'
+
+      // 5. 如果promise resolve一个promise, 返回值就会变成新的promise，then获取到的数据也是新的promise中resolve的数据
+      let res5 = new Promise((res, rej) => {
+        res(
+          new Promise((res, rej) => {
+            res('new promise');
+          })
+        );
+      });
+
+      console.log(res5); // Promise;fulfilled;new promise
+
+      // 6. 使用await， await后的返回值是resolve出来的值; async函数返回的是await的promise的then对应的promise
+      function fetchData() {
+        return new Promise((res, rej) => {
+          res('await test data');
+        });
+      }
+
+      async function awaitTest1() {
+        const res = await fetchData();
+        console.log(res); //'await test data'
+      }
+
+      /* 等同于
+        function awaitTest1() {
+            return fetchData().then(res => console.log(res));
+        }
+      */
+
+      const testRes1 = awaitTest1();
+      console.log(testRes1); // Promise;fulfilled;undefined
+
+      // 7. 如果async有返回值, async 函数返回值就是一个resolve了返回值的promise
+      async function awaitTest2() {
+        const res = await fetchData();
+        console.log(res); //'await test data'
+        return '123';
+      }
+
+      /*
+        等同于
+        function awaitTest2() {
+            return fetchData().then(res => {
+                console.log(res);
+                return '123'
+            });
+        }
+      */
+
+      const testRes2 = awaitTest2();
+      console.log(testRes2); // Promise;fulfilled;'123'
+
+      // 8.如果async函数返回了一个promise,则async函数的返回值就是返回的promise
+      async function awaitTest3() {
+        return new Promise((res, rej) => {
+          res('456');
+        });
+      }
+
+      const testRes3 = awaitTest3();
+      console.log(testRes3); // Promise;fulfilled;'456'
+
+      // 9. await即使在if条件语句内，也会阻塞后面的语句
+      async function test4() {
+        if (true) {
+          await new Promise(res => {
+            res();
+          });
+        }
+
+        console.log('this is test data');
+      }
+
+      test4();
+    </script>
+  </body>
+</html>

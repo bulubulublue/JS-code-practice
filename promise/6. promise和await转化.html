@@ -8,25 +8,25 @@
   <body>
     <script>
       // 示例1
-      //   async function async1() {
-      //     console.log(1);
-      //     await 1;
-      //     console.log(2);
-      //   }
-      //   let p1 = async1();
-      //   console.log(p1);
+      async function async1() {
+        console.log(1);
+        await 1;
+        console.log(2);
+      }
+      let p1 = async1();
+      console.log(p1); // p1是一个promise，没有数据
 
-      //   //以上代码等价于
-      //   function async1Promise() {
-      //     console.log(1);
-      //     return new Promise((resolve) => {
-      //       resolve(1);
-      //     }).then(() => {
-      //       console.log(2);
-      //     });
-      //   }
-      //   let p2 = async1Promise();
-      //   console.log(p2);
+      //以上代码等价于
+      function async1Promise() {
+        console.log(1);
+        return new Promise(resolve => {
+          resolve(1);
+        }).then(() => {
+          console.log(2);
+        });
+      }
+      let p2 = async1Promise();
+      console.log(p2); // p2是一个promise，没有数据
 
       //   //示例2：如果aync函数return一个值，就等价于return Promise.resolve(val)
       //   async function async3() {
@@ -40,16 +40,17 @@
       //     console.log(3);
       //   }
 
-      //   //等价于
-      //   function async5() {
-      //     console.log(2);
-      //     return Promise.resolve(2); //return 2;
-      //   }
-      //   function async6() {
-      //     console.log(1);
-      //     return async5().then(() => console.log(3));
-      //   }
-      //   async6();
+      function async3() {
+        console.log(2);
+        return new Promise((res, rej) => {
+          res(2);
+        });
+      }
+
+      function async4() {
+        console.log(1);
+        return async3.then(() => console.log(3));
+      }
 
       // 示例3：aync函数中如果return了一个promise, 则等价于一个普通函数，return了一个Promise，为resolve，
       // resolve的内容是aync函数中return的promise

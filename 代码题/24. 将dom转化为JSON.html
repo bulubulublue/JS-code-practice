@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="test">
+      <span><a></a></span>
+      <span>
+        <a></a>
+        <a></a>
+      </span>
+    </div>
+    <script>
+      /*
+            <div>
+                <span>
+                    <a></a>
+                </span>
+                <span>
+                    <a></a>
+                    <a></a>
+                </span>
+            </div>
+
+            把上面dom结构转成下面的JSON格式
+
+            {
+            tag: 'DIV',
+            children: [
+                {
+                tag: 'SPAN',
+                children: [
+                    { tag: 'A', children: [] }
+                ]
+                },
+                {
+                tag: 'SPAN',
+                children: [
+                    { tag: 'A', children: [] },
+                    { tag: 'A', children: [] }
+                ]
+                }
+            ]
+            }
+        */
+
+      function convertDom(domTree) {
+        const obj = {};
+        obj.tag = domTree.tagName;
+        domTree.childNodes.forEach(child => {
+          if (child.tagName) {
+            if (obj.children) {
+              obj.children.push(convertDom(child));
+            } else {
+              obj.children = [convertDom(child)];
+            }
+          }
+        });
+
+        return obj;
+      }
+
+      const dom = document.getElementById('test');
+      console.log(convertDom(dom));
+    </script>
+  </body>
+</html>
